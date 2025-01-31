@@ -1,0 +1,75 @@
+<mat-tab-group mat-align-tabs="start">
+
+  
+  <!-- Tipos de Operaciones -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>format_list_bulleted</mat-icon>
+      Tipos de Operación
+    </ng-template>
+    <g-Table #gTableTipoOperacion [Conf]="DataTipoOperacion"></g-Table>
+  </mat-tab>
+  
+
+    <!-- Impuestos -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>gavel</mat-icon>
+        Impuestos
+      </ng-template>
+      <g-Table #gTableImpuestos [Conf]="DataImpuestos"></g-Table>
+    </mat-tab>
+  
+      <!-- Cajas  -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="example-tab-icon">savings</mat-icon>
+          Cajas
+        </ng-template>
+        <div>
+    
+          <g-Table #gTableCajas [Conf]="DataCajas" style="max-width: 800px;"></g-Table>
+        </div>
+    
+    
+      </mat-tab>
+
+         <!-- Medios de Pago  -->
+         <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">price_change</mat-icon>
+            Medios de Pago
+          </ng-template>
+          <div>
+      
+            <div style="padding: 20px 20px 0px 43px; ">
+              <form [formGroup]="OperacionForm" style="height: 60px;
+            overflow: hidden;">
+                <mat-form-field appearance="outline" style="width: 350px;">
+                  <mat-icon matPrefix>build</mat-icon>
+                  <mat-label>Selecciona la Operación</mat-label>
+                  <mat-select formControlName="IdTipoOperacion" (valueChange)="OperacionSel=false" placeholder="Producto">
+                    <mat-option *ngFor="let op of lstOperaciones " [value]="op.Id">
+                      {{ op.TipoOperacion }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+        
+                <div style="width:220px; display: inline-block; margin-left: 10px;">
+                  <button mat-raised-button color="primary" (click)="CargarMedios()" [disabled]="
+                      OperacionForm.invalid" matTooltip="Mostrar detalle">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div *ngIf="OperacionSel">
+            <g-Table #gTableMedios [Conf]="DataMedios" style="max-width: 800px;"></g-Table>
+          </div>
+          </div>
+      
+      
+        </mat-tab>
+  </mat-tab-group>
+  <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>

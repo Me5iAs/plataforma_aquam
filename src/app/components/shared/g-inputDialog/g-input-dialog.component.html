@@ -1,0 +1,14 @@
+<ng-container *ngIf="data?.tipo === 'boton'">
+  <button mat-raised-button [color]="data.color" *ngIf="data.color" (click)="openDialog()">{{ data.nombre }}</button>
+  <button mat-raised-button color="primary" *ngIf="!data.color" (click)="openDialog()">{{ data.nombre }}</button>
+</ng-container>
+
+<ng-container *ngIf="data?.tipo === 'icono'">
+  <button 
+    mat-icon-button (click)="openDialog()" 
+    [style.color]="data.colorIcono ? data.colorIcono : null" 
+    [matTooltip]="data.toolTip ? data.toolTip : null"
+    >
+    <mat-icon>{{ data.icono }}</mat-icon>
+  </button>
+</ng-container>

@@ -1,0 +1,68 @@
+<g-Table #gTablePedidosPendientes [Conf]="DataPedidosPendientes" (selectedItems)="SeleccionarPedidos($event)">
+</g-Table>
+
+<div class="header-container" *ngIf ='gTablePedidosPendientes.TieneDatos()'>
+  <div class="FormEnvio header-module">
+    <form [formGroup]="enviarForm">
+      <div style="padding: 10px; height: 45px;">
+
+        <!-- repartidores -->
+        <div class="enviarform_control">
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix>assignment_ind</mat-icon>
+            <mat-label>Repartidor</mat-label>
+            <mat-select formControlName="IdRepartidor" placeholder="Repartidor">
+              <mat-option *ngFor="let op of repartidores" [value]="op.Id">
+                {{ op.Usuario }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- vehiculos -->
+        <div class="enviarform_control">
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix>two_wheeler</mat-icon>
+            <mat-label>Vehículo</mat-label>
+            <mat-select formControlName="IdVehiculo" placeholder="Repartidor">
+              <mat-option *ngFor="let op of vehiculos" [value]="op.Id">
+                {{ op.Descripcion }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- btn preparar -->
+        <div style="flex:3" style="width:100px; display: inline-block;">
+          <button matTooltip="Los pedidos se cargarán al vehiculo, pero aun no parte" mat-raised-button color="primary" style="width: 100px" (click)="enviarPedido()" [disabled]="
+            enviarForm.invalid || gTablePedidosPendientes.ItemsSeleccionados.length == 0">
+            Enviar
+          </button>
+        </div>
+      </div>
+
+      <div class="selpedidos"> 
+        <table style="width: 100%" *ngIf="PedidosSel.length >0">
+          <tr>
+            <td class="selpedidos_header">Pedidos sel: {{gTablePedidosPendientes.ItemsSeleccionados.length}}</td>
+            <td class="selpedidos_detalle" *ngFor="let item of PedidosSel">{{ item.Producto }}: {{item.Cantidad}}</td>
+          </tr>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  <div class="TotalProds header-module">
+    <div class="tp_titulo">Pedidos Pendientes</div>
+    <div class="tp_lista" *ngFor="let prod of PedidosSel">
+      <div class="producto">{{prod.Producto}}</div>
+      <div class="cantidad">{{TotalProducto(prod.Id) }}</div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf ='!gTablePedidosPendientes.TieneDatos()' class="SinPedidosPendientes" >
+  No se tiene pedidos pendientes de enviar
+  <br>
+  <mat-icon>sentiment_very_dissatisfied</mat-icon>
+</div>

@@ -6,8 +6,24 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
+<body class="mat-typography">
   <app-root></app-root>
 </body>
+<div id="cargando_principal" 
+  style=" width: 100%; 
+          display:none; 
+          height: 100%;
+          background: rgba(255,255,255,0.8);
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          z-index: 1000;
+          text-align: center;
+          padding-top: 100px
+        ">
+  <img src="assets/cargando.gif">
+</div>
 </html>

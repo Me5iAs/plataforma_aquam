@@ -1,0 +1,10 @@
+<div class="footer">
+  <ng-container *ngFor="let op of Menu">
+    <div class="footer-item"  [ngClass]="{'active': isActive(op.Link)}" *ngIf="op.TipoMenu != 'Submenu' && op.Link !='/home'" >
+    <button mat-icon-button [routerLink]="op.Link" >
+      <mat-icon>{{op.Icono}}</mat-icon>
+    </button>
+    <div class="item">{{op.Item}}</div>
+  </div>
+</ng-container>
+</div>

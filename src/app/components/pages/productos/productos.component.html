@@ -1,0 +1,122 @@
+<mat-tab-group mat-align-tabs="start">
+
+  <!-- productos -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>liquor</mat-icon>
+      Productos
+    </ng-template>
+    <g-Table #gTableProducts [Conf]="DataProducts"></g-Table>
+  </mat-tab>
+
+<!-- taifario general -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">attach_money</mat-icon>
+      Tarifario General
+    </ng-template>
+
+    <div style="padding: 20px 20px 0px 43px; ">
+      <form [formGroup]="TarifarioGeneralForm" style="height: 60px;
+    overflow: hidden;" >
+        <mat-form-field appearance="outline" style="width: 400px;">
+          <mat-icon matPrefix>liquor</mat-icon>
+          <mat-label>Selecciona un tarifario</mat-label>
+          <mat-select formControlName="IdTarifario" (valueChange)="TarifarioGeneralProductoSel=false" placeholder="Producto">
+            <mat-option *ngFor="let op of lstTarifarios" [value]="op.Id">
+              {{ op.Glosa }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div style="width:220px; display: inline-block; margin-left: 10px;">
+          <button mat-raised-button color="primary"
+             (click)="cargarTarifarioGeneral()" [disabled]="
+              TarifarioGeneralForm.invalid" matTooltip="Mostrar detalle">
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-raised-button color="accent"
+          (click)="editarTarifarioGeneral()" [disabled]="
+           TarifarioGeneralForm.invalid" style="margin-left:10px" matTooltip="Ampliar plazo">
+         <mat-icon>event_available</mat-icon>
+       </button>
+       <button mat-raised-button color="warn"
+       (click)="eliminarTarifarioGeneral()" [disabled]="
+        TarifarioGeneralForm.invalid" style="margin-left:10px" matTooltip="Eliminar tarifario">
+      <mat-icon>delete_forever</mat-icon>
+    </button>
+         
+        </div>
+      </form>
+      <div style="position: absolute; top: 33px; right: 50px;" >
+        <app-gInputDialog [data]="nuevoTarifario(0)"></app-gInputDialog>
+      </div>
+
+  
+
+
+    </div>
+
+    <div >
+      <g-Table #gTableGeneral [Conf]="DataGeneral" *ngIf="TarifarioGeneralProductoSel"></g-Table>
+      <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+    </div>
+    
+  </mat-tab>
+
+<!-- tarifario especial por clientes -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">price_check</mat-icon>
+      Tarifario Especial
+    </ng-template>
+    
+    
+    <div style="padding: 20px 20px 0px 43px; ">
+      <form [formGroup]="TarifarioEspecialForm" style="height: 60px;
+    overflow: hidden;" >
+        <mat-form-field appearance="outline" style="width: 400px;">
+          <mat-icon matPrefix>liquor</mat-icon>
+          <mat-label>Selecciona un tarifario especial</mat-label>
+          <mat-select formControlName="IdTarifario" (valueChange)="TarifarioEspecialProductoSel=false" placeholder="Tarifario x Cliente">
+            <mat-option *ngFor="let op of lstTarifariosEspecial" [value]="op.Id">
+              {{ op.Glosa }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div style="width:220px; display: inline-block; margin-left: 10px;">
+          <button mat-raised-button color="primary"
+             (click)="cargarTarifarioEspecial()" [disabled]="
+              TarifarioEspecialForm.invalid" matTooltip="Mostrar detalle">
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-raised-button color="accent"
+          (click)="editarTarifarioEspecial()" [disabled]="
+           TarifarioEspecialForm.invalid" style="margin-left:10px" matTooltip="Ampliar plazo">
+         <mat-icon>event_available</mat-icon>
+       </button>
+       <button mat-raised-button color="warn"
+       (click)="eliminarTarifarioEspecial()" [disabled]="
+        TarifarioEspecialForm.invalid" style="margin-left:10px" matTooltip="Eliminar tarifario">
+      <mat-icon>delete_forever</mat-icon>
+    </button>
+         
+        </div>
+      </form>
+      <div style="position: absolute; top: 33px; right: 50px;" >
+        <app-gInputDialog [data]="nuevoTarifarioEspecial()"></app-gInputDialog>
+      </div>
+
+  
+
+
+    </div>
+
+    <div >
+      <g-Table #gTableEspecial [Conf]="DataEspecial" *ngIf="TarifarioEspecialProductoSel"></g-Table>
+      
+    </div>
+    
+  </mat-tab>
+</mat-tab-group>

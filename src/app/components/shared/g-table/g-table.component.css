@@ -1,0 +1,144 @@
+::ng-deep .cdk-overlay-pane .mat-dialog-container{
+  max-height: 95vh;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  max-width: 90%;
+  margin: auto;
+}
+
+.mat-form-field {
+  flex-grow: 1;
+  margin-right: 16px; /* Espacio entre el filtro y los iconos */
+}
+
+.icon-container {
+  display: flex;
+  margin-left: auto;
+}
+
+
+.mat-form-field input {
+  padding-right: 30px; /* Espacio para el botón X */
+}
+
+.mat-form-field button[mat-icon-button] {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0;
+}
+
+.add-button {
+  margin-left: auto;
+}
+.export-button {
+  margin-left: auto;
+}
+
+table{
+  /* width: 90%; */
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px
+}
+
+.mat-column-Nivel {
+  text-align: center;
+}
+
+mat-paginator{
+  margin:auto
+}
+
+
+/* Centrar el encabezado de la columna "Acciones" */
+.mat-header-cell.mat-column-actions {
+  text-align: center;
+  padding: 0 8px; /* Asegura que el padding del encabezado coincida con las celdas */
+}
+
+
+/* sombreado */
+.mat-row:hover {
+  background-color: #f0f0f0; /* Cambia el color de fondo de la fila al hacer hover */
+} 
+
+/* dialogo */
+
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mat-form-field {
+  width: calc(100% - 10px); /* Asegura que el campo de entrada ocupe todo el ancho del contenedor */
+  box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
+}
+
+.close-button{
+  position: absolute;
+  right: 10px;
+  top: 7px;
+}
+
+.clearButton{
+  transform: translateY(-50%) !important;
+}
+
+
+@media screen and (max-width: 768px){
+  .filter-container{
+    width: 100% !important;
+  }
+  table{
+    width: 100% !important;
+  }
+  .no_mobile{
+    display: none
+  }
+  .mobile{
+    display: table-cell
+  }
+}
+
+
+
+/* mostrar u ocultar columnas dependiendo  */
+
+@media (max-width: 575px) {
+  .ocultar_celular { display:none; }
+  .mostrar_celular {display: table-cell;} 
+}
+
+/* Pantallas medianas */
+@media (min-width: 576px) and (max-width: 767px) {
+  .ocultar_mediana { display:none; }
+  .mostrar_mediana {display: table-cell;} 
+}
+
+/* Pantallas grandes */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .ocultar_grande { display:none; }
+  .mostrar_grande {display: table-cell;} 
+}
+
+/* Pantallas enorme */
+@media (min-width: 1200px) {
+  .ocultar_enorme { display:none; }
+  .mostrar_enorme {display: table-cell;} 
+}
+
+/* @media screen and (min-width: 668px){
+  .mobile{
+    display: none
+  }
+  .no_mobile{
+    display: table-cell
+  }
+} */

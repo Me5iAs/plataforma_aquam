@@ -1,0 +1,54 @@
+
+<div class="container">
+
+  <mat-card class="card">
+    <mat-card-header>
+      <div mat-card-avatar style="
+      background-size: cover;">
+      <img src="../../../../assets/users.png" alt="" style="height: 40px;">  
+      </div>
+      <mat-card-title *ngIf ="User"> 
+        {{User.Nombre}} 
+        <button mat-icon-button class="editbutton" [routerLink]= "['/miperfil']">
+          <mat-icon>edit</mat-icon>
+        </button>
+   
+      </mat-card-title >
+      <mat-card-subtitle  *ngIf ="User">{{User.Tipo}}  </mat-card-subtitle>
+      <div style="text-align: center; position:absolute; right: 30px;">
+        <img src="../../../../assets/logo.png" alt="" style="height: 50px;">
+      </div>
+
+    </mat-card-header>
+    <mat-card-content>
+      <div style='text-align: center;' >
+
+        <ng-container *ngFor="let modulo of Object.keys(groupedMenu)">
+          <fieldset>
+            <legend>{{ modulo }}</legend>
+            <div>
+              <!-- Iterar sobre las opciones del módulo -->
+              <ng-container *ngFor="let op of groupedMenu[modulo]">
+              <button mat-stroked-button *ngIf="op.TipoMenu !== 'Submenu' && op.Link !='/home'"  [routerLink]= "op.Link" class="items" style="margin: 10px">
+                <mat-icon>{{ op.Icono }}</mat-icon>
+                <span style="display: block;">{{ op.Item }}</span>
+              </button>
+            </ng-container>
+            </div>
+          </fieldset>
+        </ng-container>
+        <!-- <ng-container *ngFor="let op of Menu">
+          <button  mat-stroked-button *ngIf="op.TipoMenu !== 'Submenu' && op.Link !='/home'" [routerLink]= "op.Link"  class="items" style="margin: 10px">
+            <mat-icon>{{ op.Icono }}</mat-icon>
+            <span style="display: block;">{{ op.Item }}</span>
+            
+          </button>
+        </ng-container> -->
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div> 

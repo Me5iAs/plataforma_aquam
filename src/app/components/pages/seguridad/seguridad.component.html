@@ -1,0 +1,55 @@
+<mat-card>
+  <mat-card-content>
+
+    <mat-tab-group mat-align-tabs="start">
+
+      <!-- productos -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>verified_user</mat-icon>
+          Permisos
+        </ng-template>
+
+        <mat-table [dataSource]="menuItems" class="mat-elevation-z8">
+          <ng-container matColumnDef="Modulo">
+            <mat-header-cell *matHeaderCellDef> Modulo </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.Modulo}} </mat-cell>
+          </ng-container>
+        
+          <!-- Name Column -->
+          <ng-container matColumnDef="Item">
+            <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.Item}} </mat-cell>
+          </ng-container>
+        
+          <ng-container *ngFor="let tipo of tiposUsuario" [matColumnDef]="tipo?.Tipo || 'default'">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; text-align: center;"> {{ tipo?.Tipo || 'Default' }} </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let menu" style="justify-content: center;">
+              <mat-checkbox 
+                [checked]="isPermissionEnabled(menu.Id, tipo.Id)"
+                (change)="togglePermission(menu.Id, tipo.Id, $event.checked)"
+              ></mat-checkbox>
+            </mat-cell>
+          </ng-container>
+        
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-tab>
+
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>manage_accounts</mat-icon>
+          Tipos de Usuarios
+        </ng-template>
+        <g-Table #gTableUsers [Conf]="DataUsers"></g-Table>
+
+      </mat-tab>
+    </mat-tab-group>
+
+    
+  </mat-card-content>
+</mat-card>
+
+

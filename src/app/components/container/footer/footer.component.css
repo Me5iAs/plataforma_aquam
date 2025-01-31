@@ -1,0 +1,51 @@
+
+.footer {
+  display: flex;
+  justify-content: space-around; /* Distribuye los elementos uniformemente */
+  align-items: center; /* Alinea los elementos verticalmente en el centro */
+  background-color: #0084b5; /* Color de fondo azul como en tu imagen */
+  color: #fff;
+  padding: 0px 0;
+}
+
+
+.footer-item {
+  text-align: center;
+  color: white;
+}
+
+.footer-item .item {
+  margin-top: 0px;
+  font-size: 10px;
+}
+
+
+mat-icon {
+  font-size: 24px; /* Tamaño del icono */
+  color: white;
+}
+
+.mat-icon-button {
+  width: 30px;
+  height: 30px;
+}
+
+.footer-item.active {
+  background: #f2f3f5;
+  color: #004998;
+  padding: 0px 10px;
+}
+.footer-item.active mat-icon {
+  color: #004998; /* Cambia esto al color que desees para el ícono activo */
+}
+
+.footer-item mat-icon {
+  font-size: 24px;
+  color: white; /* Color por defecto para los íconos */
+}
+
+
+
+
+
+

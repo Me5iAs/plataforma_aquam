@@ -1,0 +1,258 @@
+<h1 mat-dialog-title>{{data.titulo}} </h1>
+<div mat-dialog-content>
+  <form [formGroup]="form" *ngIf="data?.formulario">
+    <ng-container *ngFor="let control of data.formulario">
+
+      <!-- Input de invisible -->
+      <mat-form-field *ngIf="control.tipo === 'invisible'" appearance="outline" style="display: none;" >
+        <mat-label>{{ control.nombre }}</mat-label>
+        <input matInput [formControlName]="control.nombre" [value]="control?.default" /> 
+      </mat-form-field>
+
+      <!-- Input de texto -->
+      <mat-form-field *ngIf="control.tipo === 'texto'" appearance="outline" >
+        <mat-label>{{ control.nombre }}</mat-label>
+        <input matInput [formControlName]="control.nombre" [value]="control?.default" [readonly]="getReadOnly(control.nombre)" /> 
+      </mat-form-field>
+
+      <!-- Input de Password -->
+      <mat-form-field *ngIf="control.tipo === 'clave'" appearance="outline" >
+        <mat-label>{{ control.nombre }}</mat-label>
+        <input matInput [formControlName]="control.nombre" type="password" [value]="control?.default" /> 
+      </mat-form-field>
+
+      <!-- Input de número -->
+      <mat-form-field *ngIf="control.tipo === 'numero'" appearance="outline">
+        <mat-label>{{ control.nombre }}</mat-label>
+        <input matInput type="number" [formControlName]="control.nombre" />
+      </mat-form-field>
+
+      <!-- Input de decimal -->
+      <mat-form-field *ngIf="control.tipo === 'decimal'" appearance="outline">
+      <mat-label>{{ control.nombre }}</mat-label>
+      <input matInput type="number" step="0.5" [formControlName]="control.nombre" />
+      </mat-form-field>
+
+      <!-- Input de fecha -->
+      <mat-form-field *ngIf="control.tipo === 'fecha'" appearance="outline">
+        <mat-label>{{ control.nombre }}</mat-label>
+        <input matInput [matDatepicker]="picker" [formControlName]="control.nombre" readonly>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Campo de tipo Hora -->
+      <ng-container  *ngIf="control.tipo === 'hora'" >
+        <mat-form-field appearance="outline">
+          <mat-label>{{ control.nombre }}</mat-label>
+          <input matInput style="height: 20px; line-height: 9px;" type="time" [formControlName]="control.nombre" [min]="control.MinHora" [max]="control.MaxHora"
+            placeholder="{{ control.placeholder }}">
+        </mat-form-field>
+      </ng-container>
+
+      <!-- Input de booleano -->
+      <mat-checkbox *ngIf="control.tipo === 'booleano'" [formControlName]="control.nombre">
+        {{ control.nombre }}
+      </mat-checkbox>
+
+      <!-- Select -->
+      <mat-form-field *ngIf="control.tipo === 'select'" appearance="outline">
+        <mat-label> {{ control.Etiqueta }}</mat-label>
+
+        <mat-select [formControlName]="control.nombre" [placeholder] = "control.placeholder">
+          <mat-option *ngFor="let option of control.opciones" [value]="option.Id">
+            {{ option.valor }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Campo de tipo Lista Dinámica -->
+      <ng-container *ngIf="control.Tipo === 'ListaDinamica'">
+        <mat-form-field [ngClass]="getColumnClasses(control?.Columnas, control?.Ancho)" class="form-item" appearance="outline" [ngStyle]="control.Estilo">
+          <mat-label>{{ control.Etiqueta }}</mat-label>
+          <input matInput [formControlName]="control.Nombre" [matAutocomplete]="auto" [placeholder]="control.placeholder"
+            [value]="displayFn(form.get(control.Nombre)?.value)">
+          <button *ngIf="form.get(control.Nombre).value" mat-icon-button matSuffix
+            (click)="clearAutocomplete(control.Nombre, control)">
+            <mat-icon class="clearButton">close</mat-icon>
+          </button>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event, control); control.FnChange ? control.FnChange($event, control.Nombre) : null">
+            <mat-option *ngFor="let option of (filteredOptions[control.Nombre] | async)" [value]="option">
+              {{ option.Valor }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error
+            *ngIf="form.get(control.Nombre).hasError('required') && form.get(control.Nombre).touched">
+            {{ control.Error }}
+          </mat-error>
+        </mat-form-field>
+      </ng-container>
+
+      <!-- campo de tipo Tabla Dinamica -->
+      <ng-container *ngIf="control.Tipo=='TablaDinamica'">
+        <div *ngIf="control?.dataSource?.data?.length==0 || !control?.dataSource" style="text-align: center; margin:auto" >
+          <h2>cargando</h2>
+          <img src="../../../../assets/cargando.gif" alt="" >
+        </div>
+        
+        <div [innerHTML]="getTituloTabla(control)" style="margin-bottom: 10px;">
+
+        </div>
+         
+        <table mat-table [dataSource]="control.dataSource" class="mat-elevation-z8" style="width: 100%; margin-bottom: 20px;" *ngIf="control?.dataSource?.data?.length>0"  >
+          
+            <ng-container *ngFor="let column of control.columnas" [matColumnDef]="column">
+
+              <!-- columnas fusionadas -->
+              <ng-container *ngIf="isFusionada(column, control)">
+                
+                <th mat-header-cell *matHeaderCellDef
+                  [style]="getEstiloColumna(control, column)">{{ getEtiquetaColumna(control, column) }}</th>
+
+                <td mat-cell *matCellDef="let row" [style]="getEstiloColumna( control, column)">
+                  <!-- Titulo con estilos dinámicos -->
+                  <div [ngStyle]="getFusionadaStyle(column, 'EstiloTitulo', control)" 
+                  [innerHTML]="getFusionadaValue(row, column, 'Titulo', control)">
+                </div>
+                  
+                  <!-- Cuerpo con estilos dinámicos -->
+                  <div [ngStyle]="getFusionadaStyle( control, column, 'EstiloCuerpo')" 
+                  [innerHTML]="getFusionadaValue(row, column, 'Cuerpo', control)"></div>
+                </td>
+              </ng-container>
+
+              <!-- columas normales -->
+              <ng-container>
+                <th mat-header-cell class="cab_tabladinamica" *matHeaderCellDef [style]="getEstiloColumna(control, column)">
+                  <span style="padding:5px">{{ getEtiquetaColumna(control, column) }}</span>
+                </th>
+                <td mat-cell *matCellDef="let element"  [style]="getEstiloColumna(control, column)">
+                  <mat-icon *ngIf="getExisteColumnaIcono(column, control)" 
+                    [matTooltip]="getValorColumnaIcono(element, column, 'Etiqueta', control)" 
+                    [style]="getValorColumnaIcono(element, column, 'Estilo', control)" 
+                    [style.filter]="{filter:'drop-shadow(0px 0px 2px rgba(0,0,0,0.2))'}"
+                    (click)="getEventoclick(element, column, control)"
+                  >
+                    {{getValorColumnaIcono(element, column, "Icono", control)}}
+                  </mat-icon>
+                  <span *ngIf="!getExisteColumnaIcono(column, control)">{{getValorCelda(element, column, control)}}</span>
+                  
+                </td>
+              </ng-container>
+          
+          
+            </ng-container>
+          
+              <tr mat-header-row *matHeaderRowDef="control.columnas"></tr>
+              <tr mat-row *matRowDef="let row; columns: control.columnas;"></tr>
+            
+          </table>
+
+      </ng-container>
+  
+          <!-- este tipo de campos crea una tabla y muestra en una fila varios imputs, la tabla es 100% y los  -->
+          <!-- Campo de tipo GrupoControles -->
+          <ng-container *ngIf="control.Tipo === 'GrupoControles'" [formGroupName]="control.Nombre">
+            <div [ngClass]="getColumnClasses(control?.Columnas, control?.Ancho)" style="vertical-align:top" >
+            <h2 style="margin-bottom: 0px;">{{ control.Etiqueta }}</h2>
+          
+            <div class="contenedor-principal" [ngStyle]="control.Estilo">
+            
+              <!-- Encabezado -->
+              <div class="fila encabezado">
+                <div class="columna encabezado-celda" *ngFor="let columna of control.lstColumnas">{{ columna }}</div>
+              </div>
+            
+              <!-- Contenedor de filas -->
+              <div class="fila-contenedor" *ngFor="let filaKey of getFilasKeys(control.Nombre); let i = index" [formGroupName]="filaKey">
+                <div class="fila-dato">
+                  <div class="columna" *ngFor="let celda of getCeldas(control, i)" [ngStyle]="celda.Estilo">
+                     
+                    <!-- texto -->
+                    <input *ngIf="celda.Tipo === 'Texto'"
+                      type="text"
+                      class="input-texto" 
+                      [ngClass] ="celda.SoloLectura ? 'input-texto' : 'imputActivo'"
+                      [formControlName]="celda.Nombre"
+                      [placeholder]="celda.Nombre"
+                      [readonly]="celda.SoloLectura"
+                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                      [ngStyle]="celda.Estilo"
+                      (change)="celda.FnChange ? celda.FnChange($event, celda, control,  filaKey) : null"
+                    />
+  
+                    <!-- Numero (entero) -->
+                    <input *ngIf="celda.Tipo === 'Numero'"
+                      type="number"
+                      class="input-numero"
+                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                      [formControlName]="celda.Nombre"
+                      min="0"
+                      [placeholder]="celda.Nombre"
+                      [ngStyle]="celda.Estilo"
+                      [readonly]="celda.SoloLectura"
+                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                      (change)="celda.FnChange ? celda.FnChange($event, celda, control) : null"
+                    />
+  
+                    <!-- decimal -->
+                    <input *ngIf="celda.Tipo === 'Decimal'"
+                      type="number"
+                      step="0.5"
+                      class="input-numero"
+                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                      [formControlName]="celda.Nombre"
+                      min="0"
+                      [placeholder]="celda.Nombre"
+                      [readonly]="celda.SoloLectura"
+                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                      [ngStyle]="celda.Estilo"
+                      (change)="formatearDecimalGrupo($event); celda.FnChange ? celda.FnChange($event, celda, control) : null"
+                      
+                    />
+  
+                    <input  *ngIf="celda.Tipo === 'ListaDinamica'" type="text"
+                      [placeholder]="celda.placeholder"
+                      [formControl]="form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)"
+                      [matAutocomplete]="auto"
+                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                      [ngStyle]="celda.Estilo"
+                      class="input-texto"
+                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                      [value]="displayFn(form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)?.value)"
+                    >
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let option of (filteredOptions[celda.Nombre] | async)" [value]="option">
+                        {{ option.Valor }}
+                      </mat-option>
+                    </mat-autocomplete>  
+  
+  
+             
+                    
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Fila de sub-Totales -->
+               <ng-container  *ngIf="control?.FilasSubTotal?.length > 0">
+              <div class="fila-totales" *ngFor="let fila of control.FilasSubTotal" [ngStyle]="fila?.EstiloFila || null" >
+                <div *ngFor="let columna of control.lstColumnas" class="columna-total" >
+                  <span   [ngStyle]="getEstiloSubtotales(fila, columna)">
+                    {{ valorSubtotal(control, fila, columna) }}
+                  </span>
+                 </div>
+              </div>
+            </ng-container>
+            </div>
+            
+          </div>
+          </ng-container>
+
+    </ng-container>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [disabled]="!form.valid" (click)="onSubmit()"> {{data.BtnAceptar || "Aceptar" }} </button>
+  <button mat-raised-button color="warn" (click)="onCancel()">Cancelar</button>
+</div>

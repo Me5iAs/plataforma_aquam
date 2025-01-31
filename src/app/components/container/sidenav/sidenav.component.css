@@ -1,0 +1,54 @@
+ .menuGrupo{
+  height: 35px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  color: rgba(0,0,0,0.5);
+  padding-top: 20px;
+  font-weight: 500;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.toggle-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu-content {
+  overflow: hidden;
+  max-height: 800px;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.menu-content.collapsed {
+  max-height: 0; 
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.sidenav-item {
+  display: flex;
+  padding-left: 20px;
+  cursor: pointer;
+  height: 40px;
+  color: rgba(0,0,0,0.5);
+  align-items: center;
+
+  gap: 10px;
+}
+
+.sidenav-item:hover{
+  background: #f3f3f3;
+  color: #0084b5;
+}
+
+.sidenav-item.active {
+  background: #0084b5;
+  color: #fff;
+}
+
+.sidenav-item.active mat-icon {
+  color: #fff; 
+} 
+

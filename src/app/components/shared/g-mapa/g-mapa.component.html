@@ -1,0 +1,10 @@
+<ng-container *ngIf="dataMap?.Tipo=='Boton'">
+  <button mat-raised-button color="primary" [ngStyle]="dataMap?.Boton?.Estilo" (click)="VerMapaModal()"> {{dataMap?.Boton?.Texto}} </button>
+</ng-container>
+<ng-container *ngIf="dataMap?.Tipo=='Icono'">
+    <mat-icon [ngStyle]="dataMap?.Icono?.Estilo" (click)="VerMapaModal()" > {{dataMap?.Icono?.Icono}} </mat-icon>
+</ng-container>
+<ng-container *ngIf="dataMap?.Tipo=='Elemento'">  
+<h2>{{dataMap?.Titulo}} </h2>
+<div #gMapElement id="gMapElement" class="MapaContainer"></div>
+</ng-container>

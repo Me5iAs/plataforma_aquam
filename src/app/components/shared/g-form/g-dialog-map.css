@@ -1,0 +1,7 @@
+.acciones{
+  display: inline-block;
+  position: relative;
+  z-index: 1000;
+  left: 60px;
+  top: 10px;
+}

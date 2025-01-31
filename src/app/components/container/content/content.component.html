@@ -1,0 +1,27 @@
+<!-- app.component.html -->
+
+
+<!-- <div class="wrapper">
+  <app-navbar></app-navbar>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer></app-footer>
+</div> -->
+
+<mat-drawer-container class="container" autosize style="background: #fafafa; overflow: hidden;">
+
+  <mat-drawer #drawer class="sidenav" style="width: 180px;" mode="side" [opened]="isDrawerOpened">
+    <app-sidenav style="overflow: hidden;"></app-sidenav>
+  </mat-drawer>
+
+  <div class="sidenav-content">
+    <app-navbar (toggleDrawer)="isDrawerOpened = !isDrawerOpened"></app-navbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+    
+  </div>
+
+</mat-drawer-container>

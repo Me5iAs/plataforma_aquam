@@ -1,0 +1,56 @@
+
+.container{
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+  justify-content: center;
+}
+
+.card{
+  max-width: 800px;
+  margin: auto
+}
+
+
+/* tabla de datos personales */
+.container-datos {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+.row-datos {
+  display: grid;
+  grid-template-columns: 40px 1fr 2fr 40px; /* 4 columnas: ícono, etiqueta, valor, botón */
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0;
+  transition: background-color 0.3s ease; /* Transición suave para el hover */
+}
+.row-datos:hover{
+  background-color: #f0f0f0; /* Sombreado o cambio de color al pasar el mouse */
+}
+
+.icon-datos {
+  text-align: center;
+}
+
+.label-datos {
+  font-weight: bold;
+  padding-left: 5px;
+}
+
+.value-datos {
+  padding-left: 5px;
+}
+
+.edit-datos {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 30px 1fr 1fr 30px; /* Ajusta las columnas en pantallas más pequeñas */
+  }
+}
+

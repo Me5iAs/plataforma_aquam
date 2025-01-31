@@ -1,0 +1,57 @@
+
+<div class="container">
+
+  <mat-card class="card">
+    <mat-card-header>
+      <div mat-card-avatar style="
+      background-size: cover;">
+      <img src="../../../../assets/users.png" alt="" style="height: 40px;">  
+      </div>
+      <mat-card-title *ngIf ="User"> 
+        {{User.Nombre}} 
+
+   
+      </mat-card-title >
+      <mat-card-subtitle>
+        Desde esta sección usted podrá verificar y modificar sus datos personales, además de modificar su contraseña.
+      </mat-card-subtitle>
+     
+
+    </mat-card-header>
+    <mat-card-content>
+
+      <mat-tab-group mat-align-tabs="start">
+        <mat-tab label="Datos Personales">
+          <div class="container-datos">
+            <ng-container *ngFor="let item of dataSource">
+              <div class="row-datos">
+                <div class="icon-datos">
+                  <mat-icon>{{ item.Icono }}</mat-icon>
+                </div>
+                <div class="label-datos">{{ item.Campo }}</div>
+                <div class="value-datos">{{ item.Campo=='Fecha de Nacimiento'? formatFecha(item.Valor):item.Valor }}</div>
+                <div class="edit-datos">
+                 
+                  <app-gInputDialog [data]="getDialogData(item)"></app-gInputDialog>
+                  
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+        </mat-tab>
+ 
+          <mat-tab label="Mi Sueldo">
+            en esta opción se ve el sueldo de la persona al mes, el costo por hora/dia, sus adelantos y sus descuentos por tardanzas y sus adicionales por horas extra 
+          </mat-tab>
+          <mat-tab label="Mi Cuenta">
+            aqui se ve el su usuario, su contraseña, desde cuando está trabajando.
+          </mat-tab>
+        </mat-tab-group>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div> 

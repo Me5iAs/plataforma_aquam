@@ -1,0 +1,56 @@
+
+.campo_largo {
+  width: calc(50% - 10px);
+  display: inline-block;
+}
+
+.campo_largo:not(:last-child) {
+  margin-right: 10px;
+}
+
+.campo_chico {
+  width: calc(25% - 10px);
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.campo_chico:last-of-type {
+  margin-right: 0px; /* Elimina el margen al último elemento */
+}
+
+/* celulares */
+@media (max-width: 575px) {
+  .campo_largo {
+    width: 100%;
+    display: inline-block;
+    margin-right: 0px;
+  }
+    
+  .campo_chico {
+    width: calc(50% - 5px);
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .campo_chico:last-of-type {
+    margin-right: 0px; /* Elimina el margen al último elemento */
+  }
+
+}
+.tabla{
+  width: 100%;
+}
+
+.tabla * th {
+  height: 40px;
+  text-align: center;
+  border:1px solid rgba(0,0,0,0.12)
+  
+}
+.tabla * td {
+  height: 40px;
+  text-align: center;
+  border:1px solid rgba(0,0,0,0.12)
+}
+
+

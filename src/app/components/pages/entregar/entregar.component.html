@@ -1,0 +1,42 @@
+
+<mat-card class="container">
+<mat-card-content>
+<div class="cabecera">
+  <div class="cliente"> 
+    <span class="cliente_etiqueta" >cliente</span>
+    <span class="cliente_nombre" >{{lstCliente['Nombre']}} </span>
+    <!-- <h2 style="text-align: center; display: block;"></h2> -->
+  </div>
+
+  <div class="monto" style=" color: #fff; text-align: center; padding: 33px 0px 18px 0px;">
+    <span class="signo">S/</span>
+    <span class="entero" >{{ TotalEntero }}</span> 
+    <span class="decimal">.{{TotalDecimal}} </span>    
+  </div>
+
+  <div class="monto_a_cobrar" style="
+  height: 25px;
+      width: 100px;
+      color: #0084b5;
+      background: #fff;
+      margin: auto;
+      line-height: 42px;
+      padding: 00px 20px;
+      border-radius: 35px 35px 0px 0px;
+      box-sizing: content-box;
+      margin-top: 10px;
+      padding-top: 10px;
+      text-align: center;
+      cursor:pointer" (click) =verQR()>
+    <mat-icon>qr_code</mat-icon>
+  </div>
+</div>
+
+
+<g-form #gVentaForm [Conf]="DataVenta">
+</g-form>
+<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+
+
+</mat-card-content>
+</mat-card>

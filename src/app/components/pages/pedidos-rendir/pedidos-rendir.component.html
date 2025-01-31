@@ -1,0 +1,32 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Pedidos Pendientes de Rendir</mat-card-title>
+    <mat-card-subtitle>Haga click en el repartidor</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="container">
+      <div class="card" (click)="Rendir(rep)"  *ngFor="let rep of lstVendedores">
+        <div class="avatar">
+          <img 
+          [src]="url_user + rep.Id + '.jpg'"
+          (error)="onImageError($event)" 
+          alt="{{rep.Repartidor}}"  
+          >
+        </div>
+        <div style="color:#0084b5">{{rep.Repartidor}} </div>
+        <div *ngFor="let prod of rep.Productos" style="font-size: 12px;">
+          <span> {{prod.Producto}}: {{prod.Cantidad}} </span>
+        </div>
+        <div *ngIf="rep.Estado==2"  matTooltip="Requiere Aprobacion de entregas"
+        matTooltipClass="tooltip-red" style="color: red;"><mat-icon>warning</mat-icon> </div>
+        <div *ngIf="rep.Estado==1"matTooltip="No requiere aprobación"
+        matTooltipClass="tooltip-green" style="color: green;"> <mat-icon>check_circle</mat-icon> </div>
+        <div *ngIf="rep.Estado==3"matTooltip="Entregas aprobadas"
+        matTooltipClass="tooltip-orange" style="color: orange;"> <mat-icon>published_with_changes</mat-icon> </div>
+      </div>
+
+
+    </div>
+  </mat-card-content>
+</mat-card>
+<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>

@@ -1,0 +1,278 @@
+<mat-card>
+  <form [formGroup]="gTableForm">
+    <mat-card-header>
+      <mat-card-title>
+        <ng-container *ngIf="Titulo" >{{ Titulo }}</ng-container>
+        
+        <button mat-icon-button mat-dialog-close class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content style="margin-top:12px">
+      <!-- Contenedor para alinear en filas -->
+      <ng-container *ngFor="let campo of data" class="form-container form-grid" style="display: flex; align-items: flex-start;">
+        <!-- Mostrar sólo si el campo no es de tipo "Oculto" -->
+
+        <ng-container *ngIf="campo.Tipo=='TablaDinamica'">
+          <div *ngIf="campo?.dataSource?.data?.length==0 || !campo?.dataSource" style="text-align: center; margin:auto" >
+            <h2>cargando</h2>
+            <img src="../../../../assets/cargando.gif" alt="" >
+          </div>
+          
+          <div [innerHTML]="getTituloTabla(campo)" style="margin-bottom: 10px;">
+
+          </div>
+           
+          <table mat-table [dataSource]="campo.dataSource" class="mat-elevation-z8" style="width: 100%;" *ngIf="campo?.dataSource?.data?.length>0"  >
+            
+              <ng-container *ngFor="let column of campo.columnas" [matColumnDef]="column">
+
+                <!-- columnas fusionadas -->
+                <ng-container *ngIf="isFusionada(column, campo)">
+                  
+                  <th mat-header-cell *matHeaderCellDef
+                    [style]="getEstiloColumna(campo, column)">{{ getEtiquetaColumna(campo, column) }}</th>
+
+                  <td mat-cell *matCellDef="let row" [style]="getEstiloColumna( campo, column)">
+                    <!-- Titulo con estilos dinámicos -->
+                    <div [ngStyle]="getFusionadaStyle(column, 'EstiloTitulo', campo)" 
+                    [innerHTML]="getFusionadaValue(row, column, 'Titulo', campo)">
+                  </div>
+                    
+                    <!-- Cuerpo con estilos dinámicos -->
+                    <div [ngStyle]="getFusionadaStyle( campo, column, 'EstiloCuerpo')" 
+                    [innerHTML]="getFusionadaValue(row, column, 'Cuerpo', campo)"></div>
+                  </td>
+                </ng-container>
+
+                <!-- columas normales -->
+                <ng-container>
+                  <th mat-header-cell class="cab_tabladinamica" *matHeaderCellDef
+                    [style]="getEstiloColumna(campo, column)"
+                  >
+                    <span style="padding:5px">{{ getEtiquetaColumna(campo, column) }}</span>
+                  </th>
+                  <td mat-cell *matCellDef="let element" 
+                  [style]="getEstiloColumna(campo, column)"
+                  >
+                  <mat-icon *ngIf="getExisteColumnaIcono(column, campo)" 
+                    matTooltip = "{{element[column]}}" 
+                    [style]="getValorColumnaIcono(element, column, 'Estilo', campo)" 
+                    [style.filter]="{filter:'drop-shadow(0px 0px 2px rgba(0,0,0,0.2))'}"
+                    >
+                    {{getValorColumnaIcono(element, column, "Icono", campo)}}
+                  </mat-icon>
+                  <span *ngIf="!getExisteColumnaIcono(column, campo)">{{element[column]}}</span>
+                    
+                  </td>
+                </ng-container>
+            
+            
+              </ng-container>
+            
+                <tr mat-header-row *matHeaderRowDef="campo.columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: campo.columnas;"></tr>
+              
+            </table>
+
+        </ng-container>
+        
+        <!-- Campo de tipo Texto o Número -->
+        <ng-container *ngIf="campo.Tipo === 'Texto' || campo.Tipo === 'Numero' || campo.Tipo==='Decimal'" >
+          <mat-form-field *ngIf="!isSoloLectura" class="form-item" appearance="outline"  [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }} </mat-label>
+
+            <input *ngIf="campo.Tipo != 'Decimal'" matInput [type]="campo.Tipo === 'Numero' ? 'number' : 'text'"  [formControlName]="campo.Nombre" [placeholder]="campo.placeholder">
+
+            <input *ngIf="campo.Tipo == 'Decimal'" matInput type='number' step="0.5"  [formControlName]="campo.Nombre" [placeholder]="campo.placeholder">
+              
+            <mat-error *ngIf="gTableForm.get(campo.Nombre).hasError('required')">
+              {{ campo.Error }}
+            </mat-error>
+            <mat-error *ngIf="gTableForm.get(campo.Nombre).hasError('pattern')">
+              {{ campo.Patron }}
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ campo.Valor }}</span>
+          </div>
+        </ng-container>
+
+        <!-- campo de tipo Mapa -->
+        <ng-container *ngIf="campo.Tipo === 'Mapa'">
+          <mat-form-field *ngIf="!isSoloLectura" class="form-item" appearance="outline" [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }}</mat-label>
+            <input matInput type='text' [formControlName]="campo.Nombre" readonly>
+            <mat-error *ngIf="gTableForm.get(campo.Nombre).hasError('required')">
+              {{ campo.Error }}
+            </mat-error>
+            <mat-error *ngIf="gTableForm.get(campo.Nombre).hasError('pattern')">
+              {{ campo.Patron }}
+            </mat-error>
+
+            <button mat-icon-button matSuffix (click)="MostrarModalMapa(campo)">
+              <mat-icon>{{'map'}}</mat-icon>
+            </button>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="mapa_container">
+            <label>{{ campo.Etiqueta }}:</label>
+            <div class >
+              <div class="mapa_contenido">{{ campo.Valor }}</div>
+              <div class="mapa_icono" *ngIf="campo.Valor !== null && campo.Valor !== ''">
+                <button mat-icon-button matSuffix (click)="MostrarModalMapa(campo)" >
+                  <mat-icon>{{'map'}}</mat-icon>
+              </button></div>
+            </div>
+            
+          </div>
+          <!-- <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo"> -->
+           
+            <!-- <div>
+              <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+              <span class="readonly-value">{{ campo.Valor }}</span>
+            </div>
+            <div>
+              <button mat-icon-button matSuffix (click)="MostrarModalMapa(campo)">
+                <mat-icon>{{'map'}}</mat-icon>
+              </button>
+            </div> -->
+          <!-- </div> -->
+        </ng-container>
+
+        <!-- campo de tipo Imagen  -->
+        <div class="button-row" *ngIf="campo.Tipo === 'Imagen' && !isSoloLectura" ngClass="file-container" >
+          <label class="custom-file-upload" >
+            <input type="file" [formControlName]="campo.Nombre" accept=".gif.,.jpg,.png" (change)="previewImage($event, campo.Nombre); onFileChange($event, campo.Nombre)" >
+            <mat-icon>add_a_photo</mat-icon>
+            {{ campo.Etiqueta }}
+          </label>
+          
+          <ng-container *ngIf="!isSoloLectura">
+            <img [src]="dirImagen(campo.Carpeta, campo.Valor)" *ngIf="!imageUrl[campo.Nombre]" class="input-image" alt="">
+            <img [src]="imageUrl[campo.Nombre]" class="input-image" *ngIf="imageUrl[campo.Nombre]" />
+          </ng-container>
+
+        </div> 
+        <div class="button-row" style="margin-top:10px; margin-bottom: 10px;" *ngIf="campo.Tipo === 'Imagen' && isSoloLectura" ngClass="file-container" >
+          <label class="custom-file-upload" style="cursor:auto">
+            <mat-icon>add_a_photo</mat-icon>
+            {{ campo.Etiqueta }}
+          </label>
+          
+          <ng-container >
+            <img [src]="dirImagen(campo.Carpeta, campo.Valor)" class="input-image" alt="">
+          </ng-container>
+
+        </div> 
+      
+        <!-- Campo de tipo Lista -->
+        <ng-container *ngIf="campo.Tipo === 'Lista'">
+          <mat-form-field *ngIf="!isSoloLectura" class="form-item" appearance="outline" [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }} </mat-label>
+            <mat-select [(value)]="campo.Valor" [formControlName]="campo.Nombre" [placeholder]="campo.placeholder" (selectionChange)="onOptionSelected($event, campo)">
+              <mat-option *ngFor="let opcion of campo.Lista" [value]="opcion.Id">
+                {{ opcion.Valor }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="gTableForm.get(campo.Nombre).hasError('required')">
+              {{ campo.Error }}
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ getValorLista(campo) }}</span>
+          </div>
+        </ng-container>
+
+        <!-- Campo de tipo Check -->
+        <ng-container *ngIf="campo.Tipo === 'Check'">
+          <mat-checkbox *ngIf="!isSoloLectura" [formControlName]="campo.Nombre" [ngStyle]="campo.Estilo">
+            {{ campo.Etiqueta }}
+          </mat-checkbox>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ gTableForm.get(campo.Nombre)?.value ? 'Sí' : 'No' }}</span>
+          </div>
+        </ng-container>
+
+        <!-- Campo de tipo Fecha -->
+        <ng-container *ngIf="campo.Tipo === 'Fecha'">
+          <mat-form-field *ngIf="!isSoloLectura" class="form-item" appearance="outline" [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }}</mat-label>
+            <input matInput [matDatepicker]="picker" [formControlName]="campo.Nombre" [min]="campo.FechaMinima"
+              [max]="campo.FechaMaxima" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ campo.Valor | date: 'dd/MM/yyyy' }}</span>
+          </div>
+        </ng-container>
+
+        <!-- Campo de tipo Hora -->
+        <ng-container *ngIf="campo.Tipo === 'Hora'">
+          <mat-form-field *ngIf="!isSoloLectura" class="form-item" appearance="outline" [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }}</mat-label>
+            <input matInput type="time" [formControlName]="campo.Nombre" [min]="campo.MinHora" [max]="campo.MaxHora"
+              placeholder="{{ campo.placeholder }}">
+            <mat-error
+              *ngIf="gTableForm.get(campo.Nombre).hasError('required') && gTableForm.get(campo.Nombre).touched">
+              {{ campo.Error }}
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ campo.Valor }}</span>
+          </div>
+        </ng-container>
+
+        <!-- Campo de tipo Lista Dinámica -->
+        <ng-container *ngIf="campo.Tipo === 'ListaDinamica'">
+          <mat-form-field class="form-item" appearance="outline" *ngIf="!isSoloLectura" [ngStyle]="campo.Estilo">
+            <mat-label>{{ campo.Etiqueta }}</mat-label>
+            <input matInput [formControlName]="campo.Nombre" [matAutocomplete]="auto" [placeholder]="campo.placeholder"
+              [value]="displayFn(gTableForm.get(campo.Nombre)?.value)">
+            <button *ngIf="gTableForm.get(campo.Nombre).value" mat-icon-button matSuffix
+              (click)="clearAutocomplete(campo.Nombre)">
+              <mat-icon class="clearButton">close</mat-icon>
+            </button>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event, campo)">
+              <mat-option *ngFor="let option of (filteredOptions[campo.Nombre] | async)" [value]="option">
+                {{ option.Valor }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error
+              *ngIf="gTableForm.get(campo.Nombre).hasError('required') && gTableForm.get(campo.Nombre).touched">
+              {{ campo.Error }}
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="isSoloLectura" class="readonly-item" [ngStyle]="campo.Estilo">
+            <label class="readonly-label">{{ campo.Etiqueta }}:</label>
+            <span class="readonly-value">{{ getValorListaDinamica(campo) }}</span>
+          </div>
+        </ng-container>
+
+       
+
+      </ng-container>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <div mat-dialog-actions align="center">
+        <ng-container *ngIf="!isSoloLectura">
+          
+          <button mat-raised-button [disabled]="isSaveDisabled()" (click)="onOk()" color="primary"
+            type="submit">Guardar</button>
+            <button mat-raised-button color="warn" (click)="onCancel()">Cancelar</button>
+        </ng-container>
+        <ng-container *ngIf="isSoloLectura">
+          <button mat-raised-button color="primary" (click)="onCancel()">Aceptar</button>
+        </ng-container>
+      </div>
+    </mat-card-footer>
+  </form>
+</mat-card>

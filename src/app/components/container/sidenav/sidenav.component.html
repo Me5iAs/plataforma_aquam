@@ -1,0 +1,26 @@
+<div [routerLink]="'/home'" style="height: 40px; cursor:pointer; box-shadow: 0px 0px 7px rgba(0,0,0,0.2); display: flex; justify-content: center;">
+  <img src="../../../../assets/logo_aquam_ch.svg" alt="" style="width: 100px;">
+
+</div>
+
+<div style="padding: 0px 00px ; font-size: 12px;">
+  <ng-container *ngFor="let modulo of Object.keys(groupedMenu)">
+    <div class="menuGrupo" (click)="toggleMenu(modulo)">
+      {{ modulo }}
+      <mat-icon class="toggle-icon">{{ isExpanded(modulo) ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+    <div class="menu-content" [class.collapsed]="!isExpanded(modulo)">
+      <ng-container *ngFor="let op of groupedMenu[modulo]">
+        <div class="sidenav-item" [routerLink]="op.Link" [ngClass]="{'active': isActive(op.Link)}"
+             *ngIf="op.TipoMenu != 'Submenu' && op.Link != '/home'">
+          <mat-icon>{{ op.Icono }}</mat-icon>
+          <div>{{ op.Item }}</div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  
+  
+
+</div>
+

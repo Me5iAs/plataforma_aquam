@@ -1,0 +1,40 @@
+<div #popupMap id="popupMap" style="width: 100%; height: 100%; position: relative;">
+  <div class="detalles" *ngIf="DataDialog.MostrarDetalles" >
+    <mat-accordion class="example-headers-align" multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            
+          </mat-panel-title>
+          <mat-panel-description>
+            Distancia: {{ getDistancia() }}, Tiempo: {{ getTiempo() }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+    
+        <table>
+          <tr>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th>Distancia</th>
+            <th>Tiempo</th>
+          </tr>
+          <tr *ngFor="let ruta of tramosInfo"> 
+            <td>{{ruta.inicio.lat}}, {{ruta.inicio.lng}}</td>
+            <td>{{ruta.fin.lat}}, {{ruta.fin.lng}}</td>
+            <td>{{ruta.distancia}}</td>
+            <td>{{ruta.tiempo}}</td>
+          </tr>
+        </table>
+        
+      </mat-expansion-panel>
+    </mat-accordion>
+      <p>mostrar detalles</p>
+
+  </div>
+  <div class="acciones">
+    <ng-container>
+      <button mat-raised-button class="boton-aceptar" (click)="cerrar()" >Aceptar</button>
+    </ng-container>
+  </div>
+</div>
+

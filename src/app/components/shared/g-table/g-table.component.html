@@ -1,0 +1,226 @@
+
+
+<div class="filter-container"  [style]="Conf?.Datos?.Descripcion?.Estilo" *ngIf="Conf?.Datos?.Descripcion"> {{Conf?.Datos?.Descripcion?.Mensaje}} </div>
+
+<div class="filter-container"  [style.width]="Conf?.Opciones?.AnchoTabla ? Conf.Opciones?.AnchoTabla : '90%'">
+  
+  <mat-form-field appearance="standard" *ngIf="Conf?.Opciones?.Filtro">
+    <mat-label>Filtrar {{Conf.Titulo }}</mat-label>
+    <mat-icon matPrefix>filter_list</mat-icon> <!-- Ícono de filtro -->
+    <input matInput (keyup)="aplicarFiltro($event)" [(ngModel)]="filterValue" placeholder="Buscar"  #input>
+    
+    <button *ngIf="filterValue" mat-icon-button matSuffix aria-label="Clear" (click)="limpiarFiltro()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <!-- falta implementar -->
+  <div style="display: none;"> 
+    <mat-form-field appearance="standard">
+      <mat-label>Fecha Desde</mat-label>
+      <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="fechaDesde" placeholder="Selecciona una fecha">
+      <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDesde></mat-datepicker>
+    </mat-form-field>
+  
+    <!-- Nuevo filtro de Fecha Hasta -->
+    <mat-form-field appearance="standard">
+      <mat-label>Fecha Hasta</mat-label>
+      <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="fechaHasta" placeholder="Selecciona una fecha">
+      <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+      <mat-datepicker #pickerHasta></mat-datepicker>
+    </mat-form-field>
+  
+    <!-- Botón para aplicar el filtro -->
+    <button mat-raised-button color="primary" (click)="filtrarPorFechas()">Aplicar Filtro</button>
+  </div>
+  
+  
+  <div class="icon-container">
+    <!-- acciones generales -->
+    <ng-container *ngFor="let boton of Conf?.Opciones?.AccionesGenerales">
+      <button mat-icon-button 
+        [style.color]="boton.Color ? boton.Color : null" 
+        (click)="boton.Funcion()" 
+        [matTooltip]="boton.Accion">
+        <mat-icon>{{boton.Icono}}</mat-icon>
+      </button>
+    </ng-container>
+
+    <button *ngIf="Conf?.Acciones?.Exportar" mat-icon-button 
+      [style.color]="Conf?.Acciones?.Exportar.Color ? Conf?.Acciones?.Exportar.Color : null" 
+      (click)="exportToCSV()" 
+      [matTooltip]="'Exportar a CSV'" 
+      class="export-button">
+      <mat-icon>file_download</mat-icon>
+    </button>
+
+    <!-- Botón de agregar  -->
+    <button *ngIf="Conf?.Acciones?.Agregar" mat-icon-button 
+      [style.color]="Conf.Acciones.Agregar.Color ? Conf.Acciones.Agregar.Color : null" 
+      (click)="agregar()" 
+      [matTooltip]="Conf.Acciones.Agregar.Titulo || Conf.Titulo"
+      class="add-button">
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <!-- Botón de eliminar todo -->
+    <button *ngIf="Conf?.Opciones?.Checkbox && Conf?.Opciones?.DeleteSelectCheck==true" mat-icon-button 
+      style="color: red;" 
+      (click)="eliminarSeleccion()" 
+      [matTooltip]="'Eliminar Selección'"
+      class="add-button">
+      <mat-icon>delete_sweep</mat-icon>
+    </button>
+  </div>
+</div>
+
+
+
+<table mat-table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data.length > 0" class="mat-elevation-z8" 
+[style.width]="Conf.Opciones?.AnchoTabla ? Conf.Opciones?.AnchoTabla : '90%'" >
+
+  <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+    
+    <ng-container *ngIf="column == 'select'">
+      <th mat-header-cell *matHeaderCellDef style="padding: 15px;">
+        <mat-checkbox
+          (change)="toggleSelectAll($event)"
+          [checked]="isAllSelected()"
+          [indeterminate]="isIndeterminate()"></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" style="padding-left: 15px;">
+        <mat-checkbox
+          (change)="toggleSelection(row)"
+          [checked]="ItemsSeleccionados.includes(row)"></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- columnas de accion -->
+    <ng-container *ngIf="column === 'actions'">
+      <th mat-header-cell *matHeaderCellDef [style.width.px]="AnchoAcciones()">Acciones</th>
+      <td mat-cell *matCellDef="let element" style="padding-right: 0px;">
+        <div style="text-align: center;">
+
+          <!-- otras acciones -->
+          <ng-container *ngFor="let accion of Conf.Acciones.Otros">
+            <button
+            [style.color]="accion.Color ? accion.Color : null" 
+            mat-icon-button 
+            (click)="ejecutarAccion(accion, element)"
+            [matTooltip]="accion?.Tooltip">
+              <mat-icon>{{ accion.Icono }}</mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- info -->
+          <ng-container *ngIf="Conf?.Acciones?.Info!= undefined">
+            <button 
+              [style.color]="Conf?.Acciones?.Info?.Color ? Conf.Acciones.Info.Color : null" 
+              mat-icon-button 
+              (click)="info(element)"
+              [matTooltip]="Conf?.Acciones?.Info?.Tooltip ? Conf.Acciones.Info.Tooltip : 'Info'"
+            >
+              <mat-icon *ngIf="Conf?.Acciones?.Info?.Icono"> {{ Conf.Acciones.Info.Icono }} </mat-icon>
+              <mat-icon *ngIf="!Conf.Acciones.Info.Icono"> info </mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- Editar -->
+          <ng-container *ngIf="Conf.Acciones.Editar!= undefined">
+            <button 
+            [style.color]="Conf.Acciones.Editar.Color ? Conf.Acciones.Editar.Color : null" 
+            mat-icon-button 
+            (click)="editar(element)"
+            matTooltip="Editar">
+              <mat-icon>{{Conf.Acciones.Editar.Icono || 'edit'}}</mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- Eliminar -->
+          <ng-container *ngIf="Conf?.Acciones?.Eliminar">
+            <ng-container *ngIf="Conf?.Acciones?.Eliminar?.Reactivar && element[this.Conf.Acciones.Eliminar?.Reactivar?.Estado.Columna] == '0'">
+              <button 
+              [style.color]="Conf.Acciones.Eliminar?.Reactivar?.Color ? Conf.Acciones.Eliminar?.Reactivar?.Color : 'green'" 
+              mat-icon-button 
+              (click)="eliminar(element)"
+              [matTooltip]="Conf?.Acciones?.Eliminar?.Reactivar?.Tooltip ? Conf.Acciones.Eliminar?.Reactivar?.Tooltip : 'Reactivar'"
+              >
+                <mat-icon *ngIf="Conf?.Acciones?.Eliminar?.Reactivar?.Icono"> {{ Conf.Acciones.Eliminar.Reactivar.Icono }} </mat-icon>
+                <mat-icon *ngIf="!Conf?.Acciones?.Eliminar?.Reactivar?.Icono"> restore_from_trash </mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="!(Conf?.Acciones?.Eliminar?.Reactivar && element[this.Conf.Acciones.Eliminar?.Reactivar?.Estado.Columna] == '0')">
+            <button 
+            [style.color]="Conf.Acciones.Eliminar?.Color ? Conf.Acciones.Eliminar?.Color : 'red'" 
+            
+            mat-icon-button 
+            (click)="eliminar(element)"
+          
+            [matTooltip]="Conf?.Acciones?.Eliminar?.Tooltip ? Conf.Acciones.Eliminar.Tooltip : 'Eliminar'"
+            >
+         
+              <mat-icon *ngIf="Conf?.Acciones?.Eliminar?.Icono"> {{ Conf.Acciones.Eliminar.Icono }} </mat-icon>
+              <mat-icon *ngIf="!Conf.Acciones.Eliminar.Icono"> delete </mat-icon>
+            </button>
+          </ng-container>
+          </ng-container>
+
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Columnas fusionadas -->
+    <ng-container *ngIf="isFusionada(column)">
+      <th mat-header-cell *matHeaderCellDef [style] = "getEstiloColumna(column)" [ngClass]="getColumnaPantalla(column)">{{ column }}</th>
+      <td mat-cell *matCellDef="let row" [style] = "getEstiloColumna(column)" [ngClass]="getColumnaPantalla(column)">
+        <!-- Titulo con estilos dinámicos -->
+        <div [ngStyle]="getFusionadaStyle(column, 'EstiloTitulo')" 
+        [innerHTML]="getFusionadaValue(row, column, 'Titulo')"   
+        >
+      </div>
+        
+        <!-- Cuerpo con estilos dinámicos -->
+        <div [ngStyle]="getFusionadaStyle(column, 'EstiloCuerpo')" 
+        [innerHTML]="getFusionadaValue(row, column, 'Cuerpo')"></div>
+      </td>
+    </ng-container>
+    
+    <!-- columnas normales -->
+    <ng-container *ngIf="column !== 'actions' && column != 'select' " [ngClass]="">
+      <th mat-header-cell *matHeaderCellDef [style] = "getEstiloColumna(column)" [ngClass]="getColumnaPantalla(column)">
+        <span style="padding:5px">{{ getEtiquetaColumna(column) }}</span>
+        
+      </th>
+      <td mat-cell *matCellDef="let element" [style] = "getEstiloColumna(column)" [ngClass]="getColumnaPantalla(column)">
+      <mat-icon *ngIf="getExisteColumnaIcono(column)" 
+        [style]="getValorColumnaIcono(element, column, 'Estilo')" 
+        [matTooltip]="getValorColumnaIcono(element, column, 'Etiqueta')"
+        [style.filter]="{filter:'drop-shadow(0px 0px 2px rgba(0,0,0,0.2))'}"
+        (click)="getEventoclick(element, column)"
+        >
+        {{getValorColumnaIcono(element, column, "Icono")}}
+      </mat-icon>
+      <span *ngIf="!getExisteColumnaIcono(column)">{{getValorCelda(element[column], column) }}</span>
+
+        
+      </td>
+    </ng-container>
+
+
+  </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+</table>
+  
+<ng-container >
+  <mat-paginator *ngIf="this.Conf.Opciones.Paginacion && dataSource "
+
+  [style.width]="Conf.Opciones?.AnchoTabla ? Conf.Opciones?.AnchoTabla : '90%'"
+  [pageSizeOptions]="pageSizeOptions" 
+  [pageSize]="pageSize" 
+  showFirstLastButtons>
+</mat-paginator>
+</ng-container>

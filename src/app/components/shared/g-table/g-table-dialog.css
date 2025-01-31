@@ -1,0 +1,321 @@
+/* 
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.close-button{
+  position: absolute;
+  right: 10px;
+  top: 7px;
+}
+
+
+
+.readonly-value {
+  font-size: 14px;
+  color: #000;
+  margin-top: 5px;
+}
+
+.readonly-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  height: 20px; 
+}
+
+.readonly-label {
+  font-size: 12px;
+  color: #757575;
+  margin-bottom: 4px;
+  position: absolute;
+  margin-top: -19px;
+  background: white;
+  padding: 0px 10px;
+}
+
+.mapa_container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+  height: 45px;
+}
+
+.mapa_container > label {
+  font-size: 12px;
+  color: #757575;
+  background: white;
+  padding: 0px 10px;
+  margin-right: 8px; 
+  position: absolute;
+  display: block;
+  margin-top: -42px
+}
+
+.mapa_container>div{
+  margin-top: 10px;
+  height: 30px;
+  width: 100%;
+}
+
+.mapa_contenido {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  display: inline-block;
+  width: calc(100% - 40px);
+}
+
+
+.mapa_icono {
+  width: 40px;
+  display: inline-block;
+  position: absolute;
+  margin-top: -10px;
+}
+
+.input-map {
+  display: block;
+    position: relative;
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+}
+ */
+
+/* dialogo */
+
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.close-button {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+}
+
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  /* Espacio entre los controles */
+}
+
+.form-item {
+  flex: 1 1;
+  /* Se ajusta automáticamente, pero con un ancho mínimo */
+  /* width: calc(100% - 10px);  */
+  width: 100%;
+}
+
+
+/* .readonly-item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  position: relative;
+  height: 45px;
+  width: calc(100% - 10px); 
+  box-sizing: border-box;
+} */
+
+.readonly-item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  height: 45px;
+  /* Ajusta la altura automáticamente */
+
+}
+
+.readonly-label {
+  font-size: 12px;
+  color: #757575;
+  margin-bottom: 4px;
+  position: absolute;
+  margin-top: -19px;
+  background: white;
+  padding: 0px 10px;
+}
+
+
+.readonly-value {
+  font-size: 14px;
+  color: #000;
+  margin-top: 5px;
+}
+
+.mapa_container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+  height: 45px;
+  /* width: calc(100% - 10px); */
+  /* margin-top: -5px; */
+}
+
+
+.mapa_container>label {
+  font-size: 12px;
+  color: #757575;
+  background: white;
+  padding: 0px 10px;
+  margin-right: 8px;
+  /* Espacio entre etiqueta y contenido */
+  position: absolute;
+  display: block;
+  margin-top: -42px
+}
+
+.mapa_container>div {
+  margin-top: 10px;
+  height: 30px;
+  width: 100%;
+}
+
+
+.mapa_contenido {
+  /* flex: 1; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  display: inline-block;
+  width: calc(100% - 40px);
+  /* margin: 10px 0px; */
+}
+
+
+.mapa_icono {
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  width: 40px;
+  display: inline-block;
+  position: absolute;
+  margin-top: -10px;
+}
+
+.input-map {
+  display: block;
+  position: relative;
+  flex: auto;
+  min-width: 0;
+  width: 180px;
+}
+
+.button {
+  white-space: nowrap;
+  flex: none;
+  position: relative;
+}
+
+.mat-form-field {
+  margin-top: -15px;
+}
+
+/* .mat-form-field input[type="time"] {
+  height: 20px; 
+  line-height: 9px;
+} */
+
+.hora {
+  top: 3px;
+}
+
+.mat-card-content {
+  margin-bottom: 0px !important;
+}
+
+th {
+  /* text-align: center; */
+  padding: 0px 10px;
+}
+
+
+/* sombreado */
+.mat-row:hover {
+  background-color: #f0f0f0;
+  /* Cambia el color de fondo de la fila al hacer hover */
+}
+
+
+
+.file-container{
+  border: 1px solid #ccc;
+  border-radius: 5px 5px 5px 5px;
+  margin-bottom: 20px;
+}
+
+.custom-file-upload {
+  /* border: 1px solid #ccc; */
+  display: inline-block;
+  padding: 6px;
+  cursor: pointer;
+  /* margin: auto; */
+  display: block;
+  /* width: 240px; */
+  line-height: 25px;
+  /* margin-bottom: 10px; */
+  /* border-bottom: none; */
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.input-image {
+  max-width: 100%;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  /* border: 1px solid rgba(0, 0, 0, 0.2); */
+  /* top: -1; */
+  /* border-top: none; */
+  /* max-width: 100% */
+}
+
+@media (max-width: 430px){
+  ::ng-deep .mat-dialog-container{
+    padding: 5px
+   }
+}
+
+
+.cab_tabladinamica {
+  
+  padding: 0 !important; /* Aplica padding 0 a todos los elementos */
+}
+
+.cab_tabladinamica:first-child {
+  padding-left: 24px !important; /* Aplica padding-left de 10px al primer elemento */
+}
+
+.cab_tabladinamica:last-child {
+  padding-right: 24px !important; /* Aplica padding-right de 10px al último elemento */
+}

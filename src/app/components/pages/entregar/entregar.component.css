@@ -1,0 +1,67 @@
+/* contendor general */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top:10px;
+  justify-content: center;
+}
+
+@media (max-width: 450px) { /* Ajusta 768px según el tamaño deseado para dispositivos móviles */
+  .container {
+    padding: 0px;
+    margin-top:unset;
+  }
+}
+
+
+/* cabecera */
+
+.cabecera{  background: #0084b5; }
+.cliente{   padding: 25px; color: #fff;}
+.cliente_etiqueta{ text-align: center; display: block; margin-bottom: 10px;}
+.cliente_nombre{text-align: center; display: block; font-size: 32px; line-height: 32px; font-weight: 600; font-family: 'Roboto'}
+
+/* precio grande */
+
+.precio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0084b5;
+  background: aliceblue;
+  border-radius: 10px;
+  box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+.signo {
+  font-size: 30px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  position: relative; /* Asegura que no haya espacio extra */
+  top: -65px;
+}
+.entero {
+  font-size: 100px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  line-height: 1; /* Asegura que no haya espacio extra */
+}
+.decimal {
+  font-size: 35px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  line-height: 1;
+}
+
+
+
+table * th {
+  text-align: center;
+  background: #0084b5;
+  padding: 10px;
+  color:#fff;
+}
+table * td {
+  text-align: center;
+  border: 1px solid #c3c3c3;
+  padding: 10px;
+} 
+  
+

@@ -1,0 +1,66 @@
+.card {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  padding: 0px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background: #fff;
+  /* margin: 20px; */
+  margin-bottom: 10px;
+}
+
+.mt_card{
+  margin: 20px;
+}
+
+@media (max-width: 430px){
+  .mt_card{
+    margin:unset
+   }
+}
+
+.cabecera{
+  background: #17A2B8;
+    color: #fff;
+    border-radius: 5px 5px 0px 0px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.cabecera > .Nombre {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.cabecera > .Dirccion {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.80);
+}
+
+.producto {
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+  margin: 10px;
+}
+
+.producto div {
+  display: inline-block;
+}
+
+.producto div:last-child {
+  float: right; /* Mover el último div a la derecha */
+}
+
+.opciones {
+  font-size: 12px;
+  display: flex; /* Activa el modelo Flexbox */
+  justify-content: space-around; /* Distribuye los íconos de manera uniforme */
+  align-items: center; /* Centra los íconos verticalmente */
+  padding: 10px 0; /* Espaciado interno opcional */
+}
+
+.opciones mat-icon {
+  vertical-align: middle; 
+  font-size: 24px; /* Ajusta el tamaño de los íconos si es necesario */
+  cursor: pointer; /* Agrega un cursor de puntero si los íconos son interactivos */
+}

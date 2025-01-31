@@ -1,0 +1,151 @@
+<div class="container">
+
+  <mat-card class="card">
+    <mat-card-header>
+
+      <mat-card-title> </mat-card-title>
+      <mat-card-subtitle></mat-card-subtitle>
+
+
+    </mat-card-header>
+    <mat-card-content>
+
+      <mat-tab-group mat-align-tabs="start">
+        
+        <!-- pedidos pendientes -->
+        <mat-tab label="Pedidos Pendientes">
+         
+          <g-Table #gTablePedidosPendientes [Conf]="DataPedidosPendientes" (selectedItems)="SeleccionarPedidos($event)">
+          </g-Table>
+
+          <div class="header-container" *ngIf ='gTablePedidosPendientes.TieneDatos()'>
+            <div class="FormEnvio header-module">
+              <form [formGroup]="enviarForm">
+                <div style="padding: 10px; height: 45px;">
+
+                  <!-- repartidores -->
+                  <div class="enviarform_control">
+                    <mat-form-field appearance="outline">
+                      <mat-icon matPrefix>person</mat-icon>
+                      <mat-label>Repartidor</mat-label>
+                      <mat-select formControlName="IdRepartidor" placeholder="Repartidor">
+                        <mat-option *ngFor="let op of repartidores" [value]="op.Id">
+                          {{ op.Usuario }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- vehiculos -->
+                  <div class="enviarform_control">
+                    <mat-form-field appearance="outline">
+                      <mat-icon matPrefix>two_wheeler</mat-icon>
+                      <mat-label>Vehículo</mat-label>
+                      <mat-select formControlName="IdVehiculo" placeholder="Repartidor">
+                        <mat-option *ngFor="let op of vehiculos" [value]="op.Id">
+                          {{ op.Descripcion }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- btn preparar -->
+                  <div style="flex:3" style="width:100px; display: inline-block;">
+                    <button matTooltip="Los pedidos se cargarán al vehiculo, pero aun no parte" mat-raised-button color="primary" style="width: 100px" (click)="enviarPedido()" [disabled]="
+                      enviarForm.invalid || gTablePedidosPendientes.ItemsSeleccionados.length == 0">
+                      Enviar
+                    </button>
+                  </div>
+                </div>
+                <div class="selpedidos"> 
+                  <table style="width: 100%" *ngIf="PedidosSel.length >0">
+                    <tr>
+                      <td class="selpedidos_header">Pedidos seleccionados: {{gTablePedidosPendientes.ItemsSeleccionados.length}}</td>
+                      <td class="selpedidos_detalle" *ngFor="let item of PedidosSel">{{ item.Producto }}: {{item.Cantidad}}</td>
+                    </tr>
+                  </table>
+                  
+             
+                </div>
+              </form>
+            </div>
+            <div class="TotalProds header-module">
+              <div class="tp_titulo">Pedidos Pendientes</div>
+              <div class="tp_lista" *ngFor="let prod of Productos">
+                <div class="producto">{{prod.Etiqueta}}</div>
+                <div class="cantidad">{{gTablePedidosPendientes.sumarCampo(prod.Nombre) }}</div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf ='!gTablePedidosPendientes.TieneDatos()' class="SinPedidosPendientes" >
+            No se tiene pedidos pendientes de enviar
+            <br>
+            <mat-icon>sentiment_very_dissatisfied</mat-icon>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Pedidos Enviados">
+         
+          <g-Table #gTablePedidosEnviados [Conf]="DataPedidosEnviados" (selectedItems)="SeleccionarPedidos($event)">
+          </g-Table>
+
+          <div *ngIf ='gTablePedidosEnviados.TieneDatos()' class="header-container">
+            <form [formGroup]="mapaForm">
+              <div>
+                <!-- repartidores -->
+                  <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-label>Repartidor</mat-label>
+                    <mat-select formControlName="IdRepartidor" placeholder="Repartidor">
+                      <mat-option *ngFor="let op of repartidores" [value]="op.Id">
+                        {{ op.Usuario }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                
+                <!-- btn preparar -->
+                <div style="flex:3" style="width:100px; display: inline-block;">
+                  <div style="flex:3" style="width:100px; display: inline-block; margin-left:10px">
+                    <button 
+                      matTooltip="Repartdiores" 
+                      mat-raised-button color="primary" 
+                      style="width: 100px" (click)="verMapaRepartidores()"
+                      [disabled]=" mapaForm.invalid"
+                      >
+                      <g-mapa #gMapRepartidores style="display: none;"> </g-mapa>
+                      Ver Mapa
+                    </button>
+                   
+                </div>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+        </mat-tab>
+        <!-- pedidos enviados -->
+        <mat-tab label="Pedidos Rendidos">
+          <span>en construccion</span>
+          <!-- <g-mapa [dataMap] ="dataMap2"></g-mapa>
+          <g-mapa [dataMap] ="dataMap"></g-mapa> -->
+        </mat-tab>
+  
+        
+        <!-- Pedidos en preparación -->
+
+
+   
+
+      </mat-tab-group>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div>
+
+
+
+<!-- <g-table #gTablePedidos [Conf]="DataPedidos" ></g-table> -->

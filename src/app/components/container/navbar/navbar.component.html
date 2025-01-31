@@ -1,0 +1,44 @@
+
+<div class="navbar">
+  <!-- <button mat-icon-button routerLink="/home">
+    <mat-icon>home</mat-icon>
+  </button> -->
+  <button mat-icon-button (click)="onToggleDrawer()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  
+  <span class="title" *ngIf="titulo$ | async as titulo">
+    <div class="title-content">
+      <mat-icon style="margin-right: 5px;">{{titulo[0]?.Icono}} </mat-icon>
+      {{ titulo[0]?.Item }}
+    </div>
+     
+    
+  </span>
+  <span class="spacer"></span>
+
+   <!-- Menú desplegable -->
+   <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item >
+      <mat-icon>settings</mat-icon>
+      <span>Configuración</span>
+    </button>
+    <button mat-menu-item >
+      <mat-icon>help</mat-icon>
+      <span>Ayuda</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span>Salir</span>
+    </button>
+  </mat-menu>
+
+  <!-- <button mat-icon-button (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+  </button> -->
+
+</div>

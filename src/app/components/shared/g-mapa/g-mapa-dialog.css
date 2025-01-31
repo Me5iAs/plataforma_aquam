@@ -1,0 +1,10 @@
+.acciones {
+  position: absolute;
+  bottom: 20px; /* Ajusta el margen inferior */
+  right: 5px; /* Ajusta el margen derecho */
+  z-index: 1000; /* Asegura que esté encima del mapa */
+}
+
+.boton-aceptar {
+  margin: 5px; /* Opcional: Ajusta el margen del botón */
+}

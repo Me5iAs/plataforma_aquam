@@ -1,1 +1,75 @@
 /* You can add global styles to this file, and also import other style files */
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+
+html, body { 
+  height: 100%; 
+  margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+/* body {
+  font-family: 'Gotham', Arial, sans-serif;
+} */
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+.mat-drawer-container {
+  background-color: #fff !important;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_bolditalic.otf') format('opentype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_book.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_bookitalic.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_lightitalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('assets/fonts/gothamrnd_mediumitalic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+}

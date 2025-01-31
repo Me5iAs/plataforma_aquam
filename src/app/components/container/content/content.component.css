@@ -1,0 +1,37 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+  /* background-color: #f2f3f5; */
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+}
+
+mat-toolbar {
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+button {
+  white-space: nowrap; 
+}
+
+
+.container {
+  width: 100wh;
+  height: 100vh;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  background-color: #fff;
+}
+
+/* .sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+} */
+ 

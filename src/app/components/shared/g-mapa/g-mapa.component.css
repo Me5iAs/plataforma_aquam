@@ -1,0 +1,6 @@
+.MapaContainer{
+  width: 100%;
+  min-width: 800px;
+  /* width: 100wv;  */
+  height:100vh
+}

@@ -1,0 +1,71 @@
+<mat-card class="mt_card" *ngIf ="lstPedidosPend.length>0">
+  <div style="padding: 20px;">
+    <div style="display:inline-block; font-size: 20px; font-weight: 500; color: rgba(0, 0, 0, .87);">Entegar Pedidos </div>
+    <div style="float:right">
+      Mapa
+      <mat-icon style="vertical-align: middle; cursor:pointer; color: #DC3545;" (click)="verMapaCompleto()">map</mat-icon>
+      
+    </div>
+  </div>
+  <mat-card-content>
+   
+    <div class="card" *ngFor="let item of lstPedidosPend">
+      <div class="cabecera">
+        <div class="Nombre">{{item.Nombre}} </div>
+        <div class="Dirccion">	
+          {{item.Glosa}}
+        </div>
+      </div>
+
+      <div >
+        <div class="producto" *ngFor="let prod of item.Productos">
+          <div> {{prod.Producto}} </div> <div>{{prod.Precio}} </div>
+        </div>
+        <div class="producto" >
+          <div> Total </div> 
+          <div style="font-size: 20px; line-height: 30px;  color: #28A745;font-weight: 500;">S/ {{item.Total.toFixed(2)}} </div>
+        </div>
+      </div>
+
+      <div class="opciones">
+        <span (click)="verMapaCliente(item)" style="color: #17A2B8; cursor: pointer;">
+          <mat-icon >pin_drop</mat-icon>
+          Mapa
+        </span>
+        <span (click)="EntregarPedido(item)" style="color: #28a745; cursor: pointer;">
+          <mat-icon >assignment_turned_in</mat-icon>
+          Entrega
+        </span>
+        <span (click)="RechazarPedido(item)" style="color: #dc2f02; cursor: pointer;">
+          <mat-icon >block</mat-icon>
+          Rechazo
+        </span>
+        <span (click)="ReprogramarPedido(item)" style="color: #f48c06; cursor: pointer;">
+          <mat-icon >update</mat-icon>
+          Reprogr.
+        </span>
+      </div>
+    </div>
+
+  </mat-card-content>
+  <mat-card-footer>
+
+  </mat-card-footer>
+</mat-card>
+
+<mat-card *ngIf ="lstPedidosPend.length==0" class="mt_card">
+ 
+  <mat-card-content style="text-align: center;">
+    <div style="font-size: 26px; margin-bottom: 10px; ">¡Felicitaciones!</div>
+    <div> <mat-icon style="font-size: 40px; height: 40px; width: 40px; color:green;">task_alt</mat-icon> </div>
+    <div style="color:rgba(0,0,0,0.7)">Todos los pedidos han sido entregados.</div>
+  </mat-card-content>
+</mat-card>
+<g-mapa #gMapaClientes style="display: none;"></g-mapa>
+<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+
+<!-- <g-Table #gTablePedidosEntregar [Conf]="DataPedidosEntregar">
+</g-Table>
+<g-mapa #gMapaCliente style="display: none;"></g-mapa>
+<g-mapa #gMapaEnvios style="display: none;"></g-mapa>
+<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog> -->
