@@ -615,11 +615,14 @@ export class VentaPlantaComponent implements OnInit {
 
   }
 
-  RegistrarVenta(store:any, parametros:any){
+
+  async RegistrarVenta(store:any, parametros:any){
+    const coordenadas = await this.actualizarGPS(); 
+    
     // console.log(store);
     // console.log(parametros);
 // return ;
-    this.gQuery.sql(store, parametros).subscribe((data:any) => {
+    this.gQuery.sql(store, parametros + "|" + coordenadas.lat +"|" + coordenadas.lng ).subscribe((data:any) => {
       // console.log(parametros);
 
       if(data && data[0].Resultado == "1"){
@@ -653,5 +656,31 @@ export class VentaPlantaComponent implements OnInit {
 
     
 
+  }
+
+  
+  async actualizarGPS(): Promise<{ lat: number; lng: number }> {
+    if ("geolocation" in navigator) {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            console.log("Latitud y longitud obtenidas:", lat, lng);
+            resolve({ lat, lng }); // Devuelve el objeto con las coordenadas
+          },
+          (error) => {
+            const lat = 0;
+            const lng = 0;
+            resolve({ lat, lng });
+            // console.error("Error al obtener la posición:", error.message);
+            // reject(error); // Lanza el error en caso de problemas
+          }
+        );
+      });
+    } else {
+      console.error("Geolocalización no está soportada en este navegador.");
+      throw new Error("Geolocalización no soportada");
+    }
   }
 }

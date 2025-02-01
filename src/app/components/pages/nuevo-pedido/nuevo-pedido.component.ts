@@ -48,6 +48,7 @@ export class NuevoPedidoComponent implements OnInit {
       this.User = data;
     });
 
+
     // fecha actual:
     const hoy = new Date();
     const año = hoy.getFullYear();
@@ -122,21 +123,18 @@ export class NuevoPedidoComponent implements OnInit {
         const [latitud, longitud] = result.PosicionGPS.split(', ');
 
         let Parametros = 
-        IdCliente + "|" + 
+        IdCliente     + "|" + 
         this.User?.Id + "|" + 
-        result.Glosa + "|" + 
-        result.Fecha + "|" + 
-        result.Hora + "|" + 
-        latitud + "|" + 
-        longitud + "|" + 
+        result.Glosa  + "|" + 
+        result.Fecha  + "|" + 
+        result.Hora   + "|" + 
+        latitud       + "|" + 
+        longitud      + "|" + 
         pProductos;
 
-        this.gQuery.sql("sp_operaciones_pedido_registrar", Parametros).subscribe((data:any) => {
-          if(data && data[0].Resultado == "1"){
-            alert("Pedido registrado");
-            this.limpiarFormulario();
-          }
-        });
+        
+        this.RegistrarPedido("sp_operaciones_pedido_registrar", Parametros);
+
       },
         
       Campos: [
@@ -460,6 +458,44 @@ export class NuevoPedidoComponent implements OnInit {
       filaFormGroup.get("Total").setValue("");
     })
     
+
+  }
+
+  async actualizarGPS(): Promise<{ lat: number; lng: number }> {
+    if ("geolocation" in navigator) {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            console.log("Latitud y longitud obtenidas:", lat, lng);
+            resolve({ lat, lng }); // Devuelve el objeto con las coordenadas
+          },
+          (error) => {
+            const lat = 0;
+            const lng = 0;
+            resolve({ lat, lng });
+            // console.error("Error al obtener la posición:", error.message);
+            // reject(error); // Lanza el error en caso de problemas
+          }
+        );
+      });
+    } else {
+      console.error("Geolocalización no está soportada en este navegador.");
+      throw new Error("Geolocalización no soportada");
+    }
+  }
+  
+  async RegistrarPedido(Store, Parametros){
+    const coordenadas = await this.actualizarGPS(); 
+
+
+    this.gQuery.sql(Store, Parametros + "|" + coordenadas.lat + "|" + coordenadas.lng).subscribe((data:any) => {
+      if(data && data[0].Resultado == "1"){
+        alert("Pedido registrado");
+        this.limpiarFormulario();
+      }
+    });
 
   }
 }
