@@ -39,28 +39,28 @@ const routes: Routes = [
     { path: 'miperfil',                     canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/miperfil/miperfil.module').then(m => m.MiperfilModule) },
   
     // operacion
-    { path: 'pedidos',                      canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos/pedidos.module').then(m => m.PedidosModule) },
-    { path: 'nuevo_pedido',                 canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/nuevo-pedido/nuevo-pedido.module').then(m => m.NuevoPedidoModule) },
     { path: 'venta_planta',                 canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/venta-planta/venta-planta.module').then(m => m.VentaPlantaModule) },
+    { path: 'nuevo_pedido',                 canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/nuevo-pedido/nuevo-pedido.module').then(m => m.NuevoPedidoModule) },
+    { path: 'editar_pedidos',               canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/editar-pedidos/editar-pedidos.module').then(m => m.EditarPedidosModule) },
     { path: 'pedidos_pnd',                  canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos-pendientes/pedidos-pendientes.module').then(m => m.PedidosPendientesModule) },
-    { path: 'pedidos_enviados',             canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos-enviados/pedidos-enviados.module').then(m => m.PedidosEnviadosModule) },
     { path: 'pedidos_entregar',             canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos-entregar/pedidos-entregar.module').then(m => m.PedidosEntregarModule) },
-    { path: 'envios',                       canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/envios/envios.module').then(m => m.EnviosModule) },
     { path: 'entregar/:IdPedido/:IdCliente',canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/entregar/entregar.module').then(m => m.EntregarModule) },
-    { path: 'pedidos_rendir',               canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos-rendir/pedidos-rendir.module').then(m => m.PedidosRendirModule) },
     { path: 'aprobaciones',                 canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/aprobaciones/aprobaciones.module').then(m => m.AprobacionesModule) },
+    { path: 'pedidos_rendir',               canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/pedidos-rendir/pedidos-rendir.module').then(m => m.PedidosRendirModule) },
+    { path: 'seguimiento_pedidos',          canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/seguimiento-pedidos/seguimiento-pedidos.module').then(m => m.SeguimientoPedidosModule) },
     { path: 'record_cliente/:IdCliente',    canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/record-cliente/record-cliente.module').then(m => m.RecordClienteModule) },
     { path: 'mapa_clientes',                canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/mapa-clientes/mapa-clientes.module').then(m => m.MapaClientesModule) },
     { path: 'users',                        canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/usuarios/usuarios.module').then(m => m.UsuariosModule) },
     { path: 'security',                     canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/seguridad/seguridad.module').then(m => m.SeguridadModule) },
     { path: 'productos',                    canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/productos/productos.module').then(m => m.ProductosModule) },
-    { path: 'tarifarios',                   canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/tarifarios/tarifarios.module').then(m => m.TarifariosModule) },
     { path: 'vehiculos',                    canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/vehiculos/vehiculos.module').then(m => m.VehiculosModule) },   
     { path: 'gestion_operaciones',          canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/plan-contable/plan-contable.module').then(m => m.PlanContableModule) },
     { path: 'conf_operaciones',             canActivate:[gAuthGuard],   loadChildren: () => import('./components/pages/conf-operaciones/conf-operaciones.module').then(m => m.ConfOperacionesModule) },
     { path:  "", redirectTo:"home", pathMatch:"full"}
   ] },
   { path: '*', redirectTo: '/', pathMatch: 'full' },
+  
+  
   
   
   

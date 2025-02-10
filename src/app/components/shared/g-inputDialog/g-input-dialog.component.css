@@ -171,3 +171,32 @@ button {
 .cab_tabladinamica:last-child {
   padding-right: 24px !important; /* Aplica padding-right de 10px al último elemento */
 }
+
+
+
+.file-container{
+  border: 1px solid #ccc;
+  border-radius: 5px 5px 5px 5px;
+  margin-bottom: 20px;
+  width: calc(100% - 20px);
+}
+
+.custom-file-upload {
+
+  display: inline-block;
+  padding: 6px;
+  cursor: pointer;
+  display: block;
+  line-height: 25px;
+  text-align: left;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.input-image {
+  max-width: 100%;
+  padding: 10px 15px;
+  box-sizing: border-box;
+}

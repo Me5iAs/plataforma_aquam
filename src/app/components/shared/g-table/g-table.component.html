@@ -78,7 +78,7 @@
 
 
 <table mat-table [dataSource]="dataSource" *ngIf="dataSource && dataSource.data.length > 0" class="mat-elevation-z8" 
-[style.width]="Conf.Opciones?.AnchoTabla ? Conf.Opciones?.AnchoTabla : '90%'" >
+[style.width]="Conf.Opciones?.AnchoTabla ? Conf.Opciones?.AnchoTabla : '90%'"   >
 
   <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
     

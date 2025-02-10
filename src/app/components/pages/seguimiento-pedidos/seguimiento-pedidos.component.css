@@ -1,0 +1,27 @@
+.mat-card-container {
+  max-width: 90%;
+  margin:auto;
+  margin-top:20px;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  /* Espacio entre los controles */
+}
+
+.form-item {
+  flex: 1 1;
+  margin-right: 10px;
+  /* Se ajusta automáticamente, pero con un ancho mínimo */
+  /* width: calc(100% - 10px);  */
+  width: 140px;
+}
+
+@media (max-width: 450px) {
+  .form-item{
+    width: calc(50% - 10px);
+  }
+}

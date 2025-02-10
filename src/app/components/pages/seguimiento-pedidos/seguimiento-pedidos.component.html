@@ -1,0 +1,38 @@
+<mat-card class="mat-card-container">
+  <mat-card-header>
+    <mat-card-title>
+
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="form-container">
+      <form [formGroup]="FiltroForm">
+        <!-- Campo de tipo Fecha -->
+        <mat-form-field class="form-item" appearance="outline">
+          <mat-label>Desde</mat-label>
+          <input matInput [matDatepicker]="desde" formControlName="Desde">
+          <mat-datepicker-toggle matSuffix [for]="desde"></mat-datepicker-toggle>
+          <mat-datepicker #desde></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="form-item" appearance="outline">
+          <mat-label>Hasta</mat-label>
+          <input matInput [matDatepicker]="hasta" formControlName="Hasta">
+          <mat-datepicker-toggle matSuffix [for]="hasta"></mat-datepicker-toggle>
+          <mat-datepicker #hasta></mat-datepicker>
+        </mat-form-field>
+
+
+        <mat-checkbox formControlName="Pendientes" style="margin-right: 10px;">
+          Incluir pendientes
+        </mat-checkbox>
+
+
+        <button mat-raised-button color="primary" (click)="CargarSeguimiento()">Mostrar</button>
+      </form>
+      <g-Table #gTableSeguimiento [Conf]="DataSeguimiento" style="width: 100%;"></g-Table>
+      <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+    </div>
+
+  </mat-card-content>
+</mat-card>

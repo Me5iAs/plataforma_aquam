@@ -76,7 +76,7 @@ export class NuevoPedidoComponent implements OnInit {
       FnValidacion: (result: any) => { 
         console.log(result);
         
-        if(result.Idcliente ==null || result.IdCliente == "0" ){
+        if(result?.Idcliente?.Id ==null || result?.IdCliente?.Id == "0" ){
           if(result.Glosa ==""){
             alert("La Glosa es obligatoria para los clientes anónimos");
             return false;
@@ -96,10 +96,10 @@ export class NuevoPedidoComponent implements OnInit {
 
         // IdCliente, 
         let IdCliente =0; 
-        if(result.Idcliente ==null){
+        if(result?.Idcliente?.Id ==null){
           IdCliente = 0;
         }else{
-          IdCliente = result.Idcliente;
+          IdCliente = result?.Idcliente?.Id;
         }
 
         

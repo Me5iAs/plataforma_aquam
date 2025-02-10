@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild  } from '@angular/core';
 
 import { gConstantesService } from 'src/app/services/g-constantes.service';
 import { gQueryService } from 'src/app/services/g-query.service';
@@ -8,7 +8,7 @@ import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { APP_DATE_FORMATS, AppDateAdapter } from '../../format-datepicker';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 const url_api = gConstantesService.gImageneUsuarios;
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pedidos-rendir',
@@ -22,14 +22,22 @@ export class PedidosRendirComponent implements OnInit {
   url_user =gConstantesService.gImageneUsuarios
   url_pagos = gConstantesService.gImagenesPagos
   User: any;
-  constructor(private gQuery:gQueryService, private gAuth:gAuthService, private dialog: MatDialog) { }
+  constructor(
+    private gQuery:gQueryService, 
+    private gAuth:gAuthService, 
+    private dialog: MatDialog,
+    private router: Router ) { }
 
   ngOnInit(): void {
     (window as any).mostrarImagen = this.mostrarImagen.bind(this);
     this.gAuth.userData().subscribe((data: any) => {
       this.User = data;
     });
+    this.cargarListaRepartidores()
+  }
 
+  cargarListaRepartidores(){
+    this.lstVendedores = [];
     this.gQuery.sql("sp_operaciones_pnd_rendir_devolver").subscribe((data:any)=> {
       if(data){
         // this.lstVendedores = data;
@@ -75,17 +83,17 @@ export class PedidosRendirComponent implements OnInit {
                 }
               }
             });
-        
+          
             return acc;
+
           }, {})
         );
 
-        console.log(this.lstVendedores); 
+        // console.log(this.lstVendedores); 
        
       }
     })
   }
-
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = '../../../../assets/default-avatar.jpg'; // Ruta de la imagen por defecto
@@ -93,7 +101,7 @@ export class PedidosRendirComponent implements OnInit {
 
   Rendir(rep:any ){
     // IdRepartidor:any, ValorEntregas:any, Estado:any
-    console.log(rep);
+    // console.log(rep);
     
     if(rep.Estado == '2'){
       alert("No es posible procesar el pago de este repartidor, porque no todos sus pedidos fueron entregados como se esperaba. \n\n Solicite el VB del usuario correspondinete para continuar.")
@@ -185,9 +193,21 @@ export class PedidosRendirComponent implements OnInit {
           
           console.log(result);
          
-          this.gQuery.sql("sp_operaciones_venta_cliente_registrar", rep.Id).subscribe();
-          this.lstVendedores = this.lstVendedores.filter(vendedor => vendedor.Id !== rep.Id);
-          alert("Rendición Registrada");
+          this.gQuery.sql("sp_operaciones_venta_cliente_registrar", rep.Id + "|" + this?.User?.Id).subscribe((data:any)=> {
+            if(data && data[0].Resultado =="1"){
+              this.cargarListaRepartidores();
+              // this.lstVendedores = this.lstVendedores.filter(vendedor => vendedor.Id !== rep.Id);
+              alert("Rendición Registrada");
+              const currentUrl = this.router.url;
+              this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+                this.router.navigate([currentUrl]);
+              });
+            }else{
+              alert(data[0].Mensaje)
+            }
+        
+          });
+          
 
         }
       };

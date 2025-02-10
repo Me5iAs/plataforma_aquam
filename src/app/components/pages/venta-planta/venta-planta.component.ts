@@ -6,6 +6,7 @@ import { gQueryService } from 'src/app/services/g-query.service';
 import { gFormComponent } from '../../shared/g-form/g-form.component';
 import { gAuthService } from 'src/app/services/g-auth.service';
 import { gInputDialogComponent } from '../../shared/g-inputDialog/g-input-dialog.component';
+import { gSubirService } from 'src/app/services/g-subir.service';
 
 // interfaces de productos 
 interface Producto {
@@ -47,16 +48,19 @@ export class VentaPlantaComponent implements OnInit {
   @ViewChild('gVentaDirectaForm') gVentaDirectaForm: gFormComponent;
   @ViewChild('gInputs') gInputs: gInputDialogComponent
   
-  public IdTipoOperacion = 2; //el parametro 2 está en duro por ser el tipo de operación
+  
   DataVentaDirecta: any;
-  User: any;
+  IdOperacion = 0;
+  IdTipoOperacion = 2; 
   lstProductos: any[] = [];
   lstMediosCajas = [];
-  
-  Venta: iVenta;
   Pagos: iPagos;
+  TieneApp:boolean = false;
+  User: any;
+  Venta: iVenta;
 
-  constructor(private gAuth: gAuthService, private gQuery: gQueryService, private renderer: Renderer2) {}
+
+  constructor(private gAuth: gAuthService, private gQuery: gQueryService, private renderer: Renderer2, private gSubir:gSubirService) {}
 
   ngOnInit(): void {
     this.gAuth.userData().subscribe((data: any) => {
@@ -89,7 +93,7 @@ export class VentaPlantaComponent implements OnInit {
 
         // Validaciones:
         // - si no se ha seleccionado un cliente se puede registrar como anónimo, siempre que tenga glosa
-        if((result.Idcliente ==null || result.IdCliente =="0") && result.Glosa ==""){
+        if((result?.Idcliente?.Id ==null || result?.IdCliente?.Id =="0") && result.Glosa ==""){
             alert("Los clientes anónimos requieren tener un comentario para poder indentificarlos");
             this.gVentaDirectaForm.setFocus("Glosa")
             return false;
@@ -115,7 +119,7 @@ export class VentaPlantaComponent implements OnInit {
         let Diferencia:number = this.Venta.Total - TotalMedioPago;
 
         if(Diferencia > 0 ){
-          if((result.Idcliente ==null || result.IdCliente =="0")){
+          if((result?.Idcliente?.Id ==null || result?.IdCliente?.Id =="0")){
             alert("Error: No se puede dar crédito a clientes anónimos");
             return false;
           }else{
@@ -138,13 +142,14 @@ export class VentaPlantaComponent implements OnInit {
       },
       
       FnOk: (result: any) => {
-
+        this.TieneApp = false;
+        
         // console.log(result);
         let IdCliente =0;
-        if(result.Idcliente ==null){
+        if(result.Idcliente.Id ==null){
           IdCliente = 0;
         }else{
-          IdCliente = result.Idcliente;
+          IdCliente = result.Idcliente.Id;
         }
         // Construir el string JSON para los productos
         let pProductos = "";
@@ -172,12 +177,16 @@ export class VentaPlantaComponent implements OnInit {
         for (let key in result.Medios) {
           let medio = result.Medios[key];
           let monto = parseFloat(medio.Monto); // Convertir el monto a número decimal
+          
 
           if (monto > 0) { // Solo incluir medios con montos mayores a 0
-
+            if(key=="2"){
+              this.TieneApp = true;
+            }
             let Cant = this.lstMediosCajas.filter(item => item.IdMedioPago == key).length;
             
             if(Cant ==1){
+             
               pagosArray.push({
                 IdMedio: key, // La clave es el ID del medio de pago
                 Monto: monto, // Monto del pago
@@ -280,6 +289,108 @@ export class VentaPlantaComponent implements OnInit {
     this.cargarProductos();
     this.cargarMediosPago();
 
+  }
+
+  
+  async actualizarGPS(): Promise<{ lat: number; lng: number }> {
+    if ("geolocation" in navigator) {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            // console.log("Latitud y longitud obtenidas:", lat, lng);
+            resolve({ lat, lng }); // Devuelve el objeto con las coordenadas
+          },
+          (error) => {
+            const lat = 0;
+            const lng = 0;
+            resolve({ lat, lng });
+            // console.error("Error al obtener la posición:", error.message);
+            // reject(error); // Lanza el error en caso de problemas
+          }
+        );
+      });
+    } else {
+      console.error("Geolocalización no está soportada en este navegador.");
+      throw new Error("Geolocalización no soportada");
+    }
+  }
+
+  AumentarCantidadProducto(event, item){
+
+    const IdCliente = this.gVentaDirectaForm.gForm.get("Idcliente")?.value?.Id || 0;
+    const IdTipoOperacion = this.IdTipoOperacion;
+    const IdProducto = item;
+    const Cantidad = event.target.value;
+
+    let Parametros = IdCliente + "|" + IdTipoOperacion + "|" + IdProducto + "|" + Cantidad;
+    const productosFormGroup = this.gVentaDirectaForm.gForm.get("Productos") as FormGroup;
+    
+    if(Cantidad == 0){
+      const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
+      productosFormGroup.controls[IdProducto].get("Precio")?.setValue("");
+      productosFormGroup.controls[IdProducto].get("Bono")?.setValue("");
+      productosFormGroup.controls[IdProducto].get("Total")?.setValue("");
+
+      // actualizar la variable de ventas
+      this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad = Cantidad;
+      this.Venta.Productos.find(item => item.Id ==IdProducto).Precio = 0.00;
+      this.Venta.Productos.find(item => item.Id ==IdProducto).Bono = 0;
+      this.Venta.Productos.find(item => item.Id ==IdProducto).Total = 0.00;
+
+
+      setTimeout(() => {
+  
+        // limpiar todos los montos del formulario de montos
+        Object.keys(mediosFormGroup.controls).forEach(filaKey => {
+          const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
+          filaFormGroup.get("Monto")?.setValue("0.00");
+        })
+
+        // acceder al primer registro y asignarle el valor del total
+        mediosFormGroup.controls[ Object.keys(mediosFormGroup.controls)[0]].get("Monto").setValue(this.Venta.Total.toFixed(2));
+        // console.log('Después de ejecución - Venta:', this.Venta);
+      }, 0);
+
+
+
+    }else{
+      this.gQuery.sql("sp_tarifario_detalle_precio_y_bono", Parametros).subscribe((data: any) => {
+        if(data && data[0].Resultado === "1"){
+          // actualizar el formulario
+  
+          const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
+          productosFormGroup.controls[IdProducto].get("Precio")?.setValue(data[0].Precio);
+          productosFormGroup.controls[IdProducto].get("Bono")?.setValue(data[0].Bono);
+          productosFormGroup.controls[IdProducto].get("Total")?.setValue(data[0].Total);
+  
+          // actualizar la variable de ventas
+          this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad = Cantidad;
+          this.Venta.Productos.find(item => item.Id ==IdProducto).Precio = data[0].Precio;
+          this.Venta.Productos.find(item => item.Id ==IdProducto).Bono = data[0].Bono;
+          this.Venta.Productos.find(item => item.Id ==IdProducto).Total = data[0].Total;
+  
+  
+          setTimeout(() => {
+  
+            // limpiar todos los montos del formulario de montos
+            Object.keys(mediosFormGroup.controls).forEach(filaKey => {
+              const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
+              filaFormGroup.get("Monto")?.setValue("0.00");
+            })
+  
+            // acceder al primer registro y asignarle el valor del total
+            mediosFormGroup.controls[ Object.keys(mediosFormGroup.controls)[0]].get("Monto").setValue(this.Venta.Total.toFixed(2));
+            // console.log('Después de ejecución - Venta:', this.Venta);
+          }, 0);
+        }else{
+          
+          alert ("Error: \n\n No existe un tarifario configurado de el producto " + this.Venta.Productos.find(item => item.Id ==IdProducto).Producto + " para esta operación con este cliente en la cantidad ingresada");
+          productosFormGroup.controls[IdProducto].get("Cantidad")?.setValue(this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad);
+        }
+      })
+    }
   }
 
   // cargar los medios de pagos de manera dinamica 
@@ -460,6 +571,77 @@ export class VentaPlantaComponent implements OnInit {
     });
   }
   
+  limpiarFormulario(){
+    // cliente
+    this.gVentaDirectaForm.gForm.get("Idcliente").setValue("");
+    this.gVentaDirectaForm.gForm.get("Glosa").setValue("");
+
+    const productosFormGroup = this.gVentaDirectaForm.gForm.get("Productos") as FormGroup;
+
+    Object.keys(productosFormGroup.controls).forEach(filaKey => {
+      const filaFormGroup = productosFormGroup.get(filaKey) as FormGroup;
+      filaFormGroup.get("Cantidad").setValue(0);
+      filaFormGroup.get("Bono").setValue("");
+      filaFormGroup.get("Precio").setValue("");
+      filaFormGroup.get("Total").setValue("");
+    })
+
+    const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
+    Object.keys(mediosFormGroup.controls).forEach(filaKey => {
+      const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
+      filaFormGroup.get("Monto").setValue(0);
+    })
+  }
+
+  async RegistrarVenta(store:any, parametros:any){
+
+    const target = document.getElementById('cargando_principal');
+    target.style.display = "block";    
+    const coordenadas = await this.actualizarGPS(); 
+    target.style.display = "none";
+    if(this.TieneApp == true){
+
+      this.gInputs.data = {
+        titulo: 'Los Pagospor app requiere registro del voucher',
+        tipo: 'icono',
+        ancho: '300px',
+        icono: 'edit',
+        formulario: [
+          {
+            Tipo  : "Imagen",
+            Nombre: "Voucher", 
+            Etiqueta: "Vocuher"
+          }
+        ],
+        ok: (result) => {
+          this.gQuery.sql(store, parametros + "|" + coordenadas.lat +"|" + coordenadas.lng ).subscribe((data:any) => {
+            // console.log(parametros);
+      
+            if(data && data[0].Resultado == "1"){
+              // console.log(data[0])
+              this.gSubir.subirImagen(result.Voucher,  data[0].IdOperacion, "Pagos").subscribe();
+      
+              alert("Venta realizada")
+              this.limpiarFormulario()
+            }
+          });
+        }
+      };
+      this.gInputs.openDialog();
+
+    }else{
+    this.gQuery.sql(store, parametros + "|" + coordenadas.lat +"|" + coordenadas.lng ).subscribe((data:any) => {
+      // console.log(parametros);
+
+      if(data && data[0].Resultado == "1"){
+        alert("Venta realizada")
+        this.limpiarFormulario()
+      }
+    });
+    }
+    return false;
+  }
+
   SeleccionarCliente(){
 
     // declarar los formularios
@@ -533,154 +715,4 @@ export class VentaPlantaComponent implements OnInit {
     })
   }
 
-  AumentarCantidadProducto(event, item){
-
-    const IdCliente = this.gVentaDirectaForm.gForm.get("Idcliente")?.value?.Id || 0;
-    const IdTipoOperacion = this.IdTipoOperacion;
-    const IdProducto = item;
-    const Cantidad = event.target.value;
-
-    let Parametros = IdCliente + "|" + IdTipoOperacion + "|" + IdProducto + "|" + Cantidad;
-    const productosFormGroup = this.gVentaDirectaForm.gForm.get("Productos") as FormGroup;
-    
-    if(Cantidad == 0){
-      const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
-      productosFormGroup.controls[IdProducto].get("Precio")?.setValue("");
-      productosFormGroup.controls[IdProducto].get("Bono")?.setValue("");
-      productosFormGroup.controls[IdProducto].get("Total")?.setValue("");
-
-      // actualizar la variable de ventas
-      this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad = Cantidad;
-      this.Venta.Productos.find(item => item.Id ==IdProducto).Precio = 0.00;
-      this.Venta.Productos.find(item => item.Id ==IdProducto).Bono = 0;
-      this.Venta.Productos.find(item => item.Id ==IdProducto).Total = 0.00;
-
-
-      setTimeout(() => {
-  
-        // limpiar todos los montos del formulario de montos
-        Object.keys(mediosFormGroup.controls).forEach(filaKey => {
-          const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
-          filaFormGroup.get("Monto")?.setValue("0.00");
-        })
-
-        // acceder al primer registro y asignarle el valor del total
-        mediosFormGroup.controls[ Object.keys(mediosFormGroup.controls)[0]].get("Monto").setValue(this.Venta.Total.toFixed(2));
-        // console.log('Después de ejecución - Venta:', this.Venta);
-      }, 0);
-
-
-
-    }else{
-      this.gQuery.sql("sp_tarifario_detalle_precio_y_bono", Parametros).subscribe((data: any) => {
-        if(data && data[0].Resultado === "1"){
-          // actualizar el formulario
-  
-          const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
-          productosFormGroup.controls[IdProducto].get("Precio")?.setValue(data[0].Precio);
-          productosFormGroup.controls[IdProducto].get("Bono")?.setValue(data[0].Bono);
-          productosFormGroup.controls[IdProducto].get("Total")?.setValue(data[0].Total);
-  
-          // actualizar la variable de ventas
-          this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad = Cantidad;
-          this.Venta.Productos.find(item => item.Id ==IdProducto).Precio = data[0].Precio;
-          this.Venta.Productos.find(item => item.Id ==IdProducto).Bono = data[0].Bono;
-          this.Venta.Productos.find(item => item.Id ==IdProducto).Total = data[0].Total;
-  
-  
-          setTimeout(() => {
-  
-            // limpiar todos los montos del formulario de montos
-            Object.keys(mediosFormGroup.controls).forEach(filaKey => {
-              const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
-              filaFormGroup.get("Monto")?.setValue("0.00");
-            })
-  
-            // acceder al primer registro y asignarle el valor del total
-            mediosFormGroup.controls[ Object.keys(mediosFormGroup.controls)[0]].get("Monto").setValue(this.Venta.Total.toFixed(2));
-            // console.log('Después de ejecución - Venta:', this.Venta);
-          }, 0);
-        }else{
-          
-          alert ("Error: \n\n No existe un tarifario configurado de el producto " + this.Venta.Productos.find(item => item.Id ==IdProducto).Producto + " para esta operación con este cliente en la cantidad ingresada");
-          productosFormGroup.controls[IdProducto].get("Cantidad")?.setValue(this.Venta.Productos.find(item => item.Id ==IdProducto).Cantidad);
-        }
-      })
-    }
-
-  
-    
- 
-    
-
-  }
-
-
-  async RegistrarVenta(store:any, parametros:any){
-    const coordenadas = await this.actualizarGPS(); 
-    
-    // console.log(store);
-    // console.log(parametros);
-// return ;
-    this.gQuery.sql(store, parametros + "|" + coordenadas.lat +"|" + coordenadas.lng ).subscribe((data:any) => {
-      // console.log(parametros);
-
-      if(data && data[0].Resultado == "1"){
-        alert("Venta realizada")
-        this.limpiarFormulario()
-      }
-    });
-
-  }
-
-  limpiarFormulario(){
-    // cliente
-    this.gVentaDirectaForm.gForm.get("Idcliente").setValue("");
-    this.gVentaDirectaForm.gForm.get("Glosa").setValue("");
-
-    const productosFormGroup = this.gVentaDirectaForm.gForm.get("Productos") as FormGroup;
-
-    Object.keys(productosFormGroup.controls).forEach(filaKey => {
-      const filaFormGroup = productosFormGroup.get(filaKey) as FormGroup;
-      filaFormGroup.get("Cantidad").setValue(0);
-      filaFormGroup.get("Bono").setValue("");
-      filaFormGroup.get("Precio").setValue("");
-      filaFormGroup.get("Total").setValue("");
-    })
-
-    const mediosFormGroup = this.gVentaDirectaForm.gForm.get("Medios") as FormGroup;
-    Object.keys(mediosFormGroup.controls).forEach(filaKey => {
-      const filaFormGroup = mediosFormGroup.get(filaKey) as FormGroup;
-      filaFormGroup.get("Monto").setValue(0);
-    })
-
-    
-
-  }
-
-  
-  async actualizarGPS(): Promise<{ lat: number; lng: number }> {
-    if ("geolocation" in navigator) {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            console.log("Latitud y longitud obtenidas:", lat, lng);
-            resolve({ lat, lng }); // Devuelve el objeto con las coordenadas
-          },
-          (error) => {
-            const lat = 0;
-            const lng = 0;
-            resolve({ lat, lng });
-            // console.error("Error al obtener la posición:", error.message);
-            // reject(error); // Lanza el error en caso de problemas
-          }
-        );
-      });
-    } else {
-      console.error("Geolocalización no está soportada en este navegador.");
-      throw new Error("Geolocalización no soportada");
-    }
-  }
 }

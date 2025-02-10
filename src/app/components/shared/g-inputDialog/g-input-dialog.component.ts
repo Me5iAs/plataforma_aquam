@@ -54,6 +54,9 @@ import { gQueryService } from 'src/app/services/g-query.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
+import { gConstantesService } from 'src/app/services/g-constantes.service';
+
+const url_api = gConstantesService.gBaseUrl;
 
 @Component({
   selector: 'app-gInputDialog',
@@ -74,10 +77,16 @@ export class gInputDialogComponent  {
 
   }
 
-  openDialog(): void {
-    
-const ancho = this.data.ancho || '400px'
+  // Convertir la hora al formato hh:mm:ss
+  private formatTimeForDb(time: string): string {
+    const parts = time.split(':');
+    return `${parts[0]}:${parts[1]}:00`; // Agregar los segundos
+  }
 
+    
+  openDialog(): void {
+
+    const ancho = this.data.ancho || '400px';
     const dialogRef = this.dialog.open(DialogContent, {
       width: ancho,
       data: this.data
@@ -85,6 +94,20 @@ const ancho = this.data.ancho || '400px'
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        let archivo:any = result.ArchivosImagenes;
+        this.data.formulario.forEach(param => {
+          if (param.Tipo =="ListaDinamica"){
+            console.log("ya no se cambia el valor de la lista dinamica")
+            // result[param.Nombre] ? result[param.Nombre] = result[param.Nombre].Id : result[param.Nombre]= null; 
+          }else if(param.Tipo =="Hora"){
+            result[param.Nombre] = this.formatTimeForDb(result[param.Nombre])
+          }else if(param.Tipo == "Imagen"){            
+            result[param.Nombre] ? result[param.Nombre]= archivo[param.Nombre] : result[param.Nombre]= null;
+          } 
+          
+        })
+
+        
         this.data.ok(result);
       }
     });
@@ -109,6 +132,10 @@ export class DialogContent {
 
   dynamicListOptions: { [key: string]: any[] } = {};
   filteredOptions: { [key: string]: Observable<any[]> } = {};
+
+  public FileData;
+  public File: { [key: string]: File } = {};
+  public imageUrl: { [key: string]: any } = {};
 
   constructor(
     private gQuery:gQueryService,
@@ -164,6 +191,13 @@ export class DialogContent {
         this.form.addControl(control.nombre, MiControl);
       }else if(control.Tipo=="TablaDinamica"){
         this.loadDynamicTable(control);
+      }else if(control.Tipo =='Imagen'){
+        // campo.Valor= this.data.find(item=> item.Nombre = campo.CampoNombreImagen).Valor;
+        // this.form.addControl( control.Nombre, {}, this.getValidators(control));
+
+        let MiControl = new FormControl("", this.getValidators(control));
+        this.form.addControl(control.Nombre,MiControl)
+      // otros
       }else if(control.Tipo === 'GrupoControles' && control.Filas){
               
         const grupoControles = new FormGroup({});
@@ -237,7 +271,7 @@ export class DialogContent {
         // );
       }
 
-
+      // console.log(this.fb)
 
     });
     // console.log(this.fb);
@@ -375,6 +409,33 @@ export class DialogContent {
     
     return Icono[0][campo] || "";
     
+  }
+
+  public previewImage(event, NombreCampo) {
+    const reader = new FileReader();
+    const file = event.target.files[0];
+    reader.readAsDataURL(file);
+
+    reader.onload = _event => {
+      this.imageUrl[NombreCampo] = reader.result;
+    };
+  }
+
+  dirImagen(carpeta:string, nombre:string){
+    return url_api + carpeta + "/" + nombre + ".jpg";
+  }
+
+  onFileChange(event, NombreCampo) {
+    if (event.target.files.length > 0) {
+      this.File[NombreCampo] = event.target.files[0];
+      console.log(this.File);
+      
+    }
+    this.FileData = [
+      this.File,
+      this.form.value
+    ]
+
   }
 
   getTooltipColumnaIcono(elemento, columna, campo:string, param){ 
@@ -703,9 +764,11 @@ export class DialogContent {
       if(this?.data?.FnValidacion){
         var resultado = this.data.FnValidacion(formData);
         if(resultado == true){
+          formData.ArchivosImagenes = this.File;
           this.dialogRef.close(formData);  
         }
       }else{
+        formData.ArchivosImagenes = this.File;
         this.dialogRef.close(formData);
       }
       

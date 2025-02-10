@@ -1,97 +1,3 @@
-/* 
-.dialog-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
-.close-button{
-  position: absolute;
-  right: 10px;
-  top: 7px;
-}
-
-
-
-.readonly-value {
-  font-size: 14px;
-  color: #000;
-  margin-top: 5px;
-}
-
-.readonly-item {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  height: 20px; 
-}
-
-.readonly-label {
-  font-size: 12px;
-  color: #757575;
-  margin-bottom: 4px;
-  position: absolute;
-  margin-top: -19px;
-  background: white;
-  padding: 0px 10px;
-}
-
-.mapa_container {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 45px;
-}
-
-.mapa_container > label {
-  font-size: 12px;
-  color: #757575;
-  background: white;
-  padding: 0px 10px;
-  margin-right: 8px; 
-  position: absolute;
-  display: block;
-  margin-top: -42px
-}
-
-.mapa_container>div{
-  margin-top: 10px;
-  height: 30px;
-  width: 100%;
-}
-
-.mapa_contenido {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5;
-  display: inline-block;
-  width: calc(100% - 40px);
-}
-
-
-.mapa_icono {
-  width: 40px;
-  display: inline-block;
-  position: absolute;
-  margin-top: -10px;
-}
-
-.input-map {
-  display: block;
-    position: relative;
-    flex: auto;
-    min-width: 0;
-    width: 180px;
-}
- */
-
 /* dialogo */
 
 .dialog-title {
@@ -122,20 +28,6 @@
   width: 100%;
 }
 
-
-/* .readonly-item {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  position: relative;
-  height: 45px;
-  width: calc(100% - 10px); 
-  box-sizing: border-box;
-} */
 
 .readonly-item {
   display: flex;
@@ -258,7 +150,6 @@ th {
   padding: 0px 10px;
 }
 
-
 /* sombreado */
 .mat-row:hover {
   background-color: #f0f0f0;
@@ -267,7 +158,7 @@ th {
 
 
 
-.file-container{
+.file-container {
   border: 1px solid #ccc;
   border-radius: 5px 5px 5px 5px;
   margin-bottom: 20px;
@@ -300,22 +191,25 @@ input[type="file"] {
   /* max-width: 100% */
 }
 
-@media (max-width: 430px){
-  ::ng-deep .mat-dialog-container{
+@media (max-width: 430px) {
+  ::ng-deep .mat-dialog-container {
     padding: 5px
-   }
+  }
 }
 
 
 .cab_tabladinamica {
-  
-  padding: 0 !important; /* Aplica padding 0 a todos los elementos */
+
+  padding: 0 !important;
+  /* Aplica padding 0 a todos los elementos */
 }
 
 .cab_tabladinamica:first-child {
-  padding-left: 24px !important; /* Aplica padding-left de 10px al primer elemento */
+  padding-left: 24px !important;
+  /* Aplica padding-left de 10px al primer elemento */
 }
 
 .cab_tabladinamica:last-child {
-  padding-right: 24px !important; /* Aplica padding-right de 10px al último elemento */
+  padding-right: 24px !important;
+  /* Aplica padding-right de 10px al último elemento */
 }

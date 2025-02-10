@@ -150,104 +150,117 @@
 
       </ng-container>
   
-          <!-- este tipo de campos crea una tabla y muestra en una fila varios imputs, la tabla es 100% y los  -->
-          <!-- Campo de tipo GrupoControles -->
-          <ng-container *ngIf="control.Tipo === 'GrupoControles'" [formGroupName]="control.Nombre">
-            <div [ngClass]="getColumnClasses(control?.Columnas, control?.Ancho)" style="vertical-align:top" >
-            <h2 style="margin-bottom: 0px;">{{ control.Etiqueta }}</h2>
-          
-            <div class="contenedor-principal" [ngStyle]="control.Estilo">
-            
-              <!-- Encabezado -->
-              <div class="fila encabezado">
-                <div class="columna encabezado-celda" *ngFor="let columna of control.lstColumnas">{{ columna }}</div>
-              </div>
-            
-              <!-- Contenedor de filas -->
-              <div class="fila-contenedor" *ngFor="let filaKey of getFilasKeys(control.Nombre); let i = index" [formGroupName]="filaKey">
-                <div class="fila-dato">
-                  <div class="columna" *ngFor="let celda of getCeldas(control, i)" [ngStyle]="celda.Estilo">
-                     
-                    <!-- texto -->
-                    <input *ngIf="celda.Tipo === 'Texto'"
-                      type="text"
-                      class="input-texto" 
-                      [ngClass] ="celda.SoloLectura ? 'input-texto' : 'imputActivo'"
-                      [formControlName]="celda.Nombre"
-                      [placeholder]="celda.Nombre"
-                      [readonly]="celda.SoloLectura"
-                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
-                      [ngStyle]="celda.Estilo"
-                      (change)="celda.FnChange ? celda.FnChange($event, celda, control,  filaKey) : null"
-                    />
-  
-                    <!-- Numero (entero) -->
-                    <input *ngIf="celda.Tipo === 'Numero'"
-                      type="number"
-                      class="input-numero"
-                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
-                      [formControlName]="celda.Nombre"
-                      min="0"
-                      [placeholder]="celda.Nombre"
-                      [ngStyle]="celda.Estilo"
-                      [readonly]="celda.SoloLectura"
-                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
-                      (change)="celda.FnChange ? celda.FnChange($event, celda, control) : null"
-                    />
-  
-                    <!-- decimal -->
-                    <input *ngIf="celda.Tipo === 'Decimal'"
-                      type="number"
-                      step="0.5"
-                      class="input-numero"
-                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
-                      [formControlName]="celda.Nombre"
-                      min="0"
-                      [placeholder]="celda.Nombre"
-                      [readonly]="celda.SoloLectura"
-                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
-                      [ngStyle]="celda.Estilo"
-                      (change)="formatearDecimalGrupo($event); celda.FnChange ? celda.FnChange($event, celda, control) : null"
-                      
-                    />
-  
-                    <input  *ngIf="celda.Tipo === 'ListaDinamica'" type="text"
-                      [placeholder]="celda.placeholder"
-                      [formControl]="form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)"
-                      [matAutocomplete]="auto"
-                      [attr.tabindex]="celda.SoloLectura ? -1 : null"
-                      [ngStyle]="celda.Estilo"
-                      class="input-texto"
-                      [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
-                      [value]="displayFn(form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)?.value)"
-                    >
-                    <mat-autocomplete #auto="matAutocomplete">
-                      <mat-option *ngFor="let option of (filteredOptions[celda.Nombre] | async)" [value]="option">
-                        {{ option.Valor }}
-                      </mat-option>
-                    </mat-autocomplete>  
-  
-  
-             
-                    
-                  </div>
-                </div>
-              </div>
-  
-              <!-- Fila de sub-Totales -->
-               <ng-container  *ngIf="control?.FilasSubTotal?.length > 0">
-              <div class="fila-totales" *ngFor="let fila of control.FilasSubTotal" [ngStyle]="fila?.EstiloFila || null" >
-                <div *ngFor="let columna of control.lstColumnas" class="columna-total" >
-                  <span   [ngStyle]="getEstiloSubtotales(fila, columna)">
-                    {{ valorSubtotal(control, fila, columna) }}
-                  </span>
-                 </div>
-              </div>
-            </ng-container>
-            </div>
-            
+       <!-- campo de tipo Imagen  -->
+       <div *ngIf="control.Tipo === 'Imagen'" style="text-align: center;" ngClass="file-container" >
+        <label class="custom-file-upload">
+          <input type="file" [formControlName]="control.Nombre" accept=".gif.,.jpg,.png" (change)="previewImage($event, control.Nombre); onFileChange($event, control.Nombre)" >
+          <mat-icon>add_a_photo</mat-icon>
+          {{ control.Etiqueta }}
+        </label>
+        <ng-container>
+          <img [src]="imageUrl[control.Nombre]" class="input-image" *ngIf="imageUrl[control.Nombre]" />
+        </ng-container>
+
+      </div> 
+
+      <!-- este tipo de campos crea una tabla y muestra en una fila varios imputs, la tabla es 100% y los  -->
+      <!-- Campo de tipo GrupoControles -->
+      <ng-container *ngIf="control.Tipo === 'GrupoControles'" [formGroupName]="control.Nombre">
+        <div [ngClass]="getColumnClasses(control?.Columnas, control?.Ancho)" style="vertical-align:top" >
+        <h2 style="margin-bottom: 0px;">{{ control.Etiqueta }}</h2>
+      
+        <div class="contenedor-principal" [ngStyle]="control.Estilo">
+        
+          <!-- Encabezado -->
+          <div class="fila encabezado">
+            <div class="columna encabezado-celda" *ngFor="let columna of control.lstColumnas">{{ columna }}</div>
           </div>
-          </ng-container>
+        
+          <!-- Contenedor de filas -->
+          <div class="fila-contenedor" *ngFor="let filaKey of getFilasKeys(control.Nombre); let i = index" [formGroupName]="filaKey">
+            <div class="fila-dato">
+              <div class="columna" *ngFor="let celda of getCeldas(control, i)" [ngStyle]="celda.Estilo">
+                  
+                <!-- texto -->
+                <input *ngIf="celda.Tipo === 'Texto'"
+                  type="text"
+                  class="input-texto" 
+                  [ngClass] ="celda.SoloLectura ? 'input-texto' : 'imputActivo'"
+                  [formControlName]="celda.Nombre"
+                  [placeholder]="celda.Nombre"
+                  [readonly]="celda.SoloLectura"
+                  [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                  [ngStyle]="celda.Estilo"
+                  (change)="celda.FnChange ? celda.FnChange($event, celda, control,  filaKey) : null"
+                />
+
+                <!-- Numero (entero) -->
+                <input *ngIf="celda.Tipo === 'Numero'"
+                  type="number"
+                  class="input-numero"
+                  [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                  [formControlName]="celda.Nombre"
+                  min="0"
+                  [placeholder]="celda.Nombre"
+                  [ngStyle]="celda.Estilo"
+                  [readonly]="celda.SoloLectura"
+                  [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                  (change)="celda.FnChange ? celda.FnChange($event, celda, control) : null"
+                />
+
+                <!-- decimal -->
+                <input *ngIf="celda.Tipo === 'Decimal'"
+                  type="number"
+                  step="0.5"
+                  class="input-numero"
+                  [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                  [formControlName]="celda.Nombre"
+                  min="0"
+                  [placeholder]="celda.Nombre"
+                  [readonly]="celda.SoloLectura"
+                  [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                  [ngStyle]="celda.Estilo"
+                  (change)="formatearDecimalGrupo($event); celda.FnChange ? celda.FnChange($event, celda, control) : null"
+                  
+                />
+
+                <input  *ngIf="celda.Tipo === 'ListaDinamica'" type="text"
+                  [placeholder]="celda.placeholder"
+                  [formControl]="form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)"
+                  [matAutocomplete]="auto"
+                  [attr.tabindex]="celda.SoloLectura ? -1 : null"
+                  [ngStyle]="celda.Estilo"
+                  class="input-texto"
+                  [ngClass] ="celda.SoloLectura ? 'input-numero' : 'imputActivo'"
+                  [value]="displayFn(form.get(control.Nombre)?.get(filaKey)?.get(celda.Nombre)?.value)"
+                >
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of (filteredOptions[celda.Nombre] | async)" [value]="option">
+                    {{ option.Valor }}
+                  </mat-option>
+                </mat-autocomplete>  
+
+
+          
+                
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila de sub-Totales -->
+            <ng-container  *ngIf="control?.FilasSubTotal?.length > 0">
+          <div class="fila-totales" *ngFor="let fila of control.FilasSubTotal" [ngStyle]="fila?.EstiloFila || null" >
+            <div *ngFor="let columna of control.lstColumnas" class="columna-total" >
+              <span   [ngStyle]="getEstiloSubtotales(fila, columna)">
+                {{ valorSubtotal(control, fila, columna) }}
+              </span>
+              </div>
+          </div>
+        </ng-container>
+        </div>
+        
+      </div>
+      </ng-container>
 
     </ng-container>
   </form>

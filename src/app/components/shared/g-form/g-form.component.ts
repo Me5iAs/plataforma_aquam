@@ -92,8 +92,6 @@ export class gFormComponent implements OnInit {
     this.buildForm()
   }
 
- 
-
   buildForm(): void {
     const formatoFecha = /^\d{2}\/\d{2}\/\d{4}$/; //si el formato es dd/mm/aaaa
     const formatoHora = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ([AP]M)$/i;
@@ -222,8 +220,6 @@ export class gFormComponent implements OnInit {
       }
     });
   }
-
-  // AUXILIARES
 
   getValidators(param: any): any[] {
     const validators = [];
@@ -518,7 +514,7 @@ export class gFormComponent implements OnInit {
   }
   
   onOptionSelected(event: any, campo: any) {
-    console.log(campo)
+
     let selectedValue: any;
 
     if (event.value !== undefined) {
@@ -529,8 +525,6 @@ export class gFormComponent implements OnInit {
       selectedValue = null;
     }
 
-
-    console.log(selectedValue)
 
     // ActualizarOtroCampo : [ //solo es aplicable a lista dinamica
     //   {
@@ -618,7 +612,8 @@ export class gFormComponent implements OnInit {
     let result:any = this.gForm.value
     this.Conf.Campos.forEach(param => {
       if (param.Tipo =="ListaDinamica"){
-        result[param.Nombre] ? result[param.Nombre] = result[param.Nombre].Id : result[param.Nombre]= null; 
+        // console.log("ya no se cambia el valor de la lista dinamica")
+        // result[param.Nombre] ? result[param.Nombre] = result[param.Nombre].Id : result[param.Nombre]= null; 
       }else if(param.Tipo =="Hora"){
         result[param.Nombre] = this.formatTimeForDb(result[param.Nombre])
       }else if(param.Tipo =="Fecha"){

@@ -43,7 +43,7 @@ export class SidenavComponent implements OnInit {
         Object.keys(this.groupedMenu).forEach((modulo) => {
           this.expandedMenus[modulo] = true; // Expandido por defecto
         });
-        console.log(this.groupedMenu);
+        // console.log(this.groupedMenu);
        
         
       })

@@ -117,7 +117,7 @@ export class PedidosPendientesComponent implements OnInit {
               Store       : "sp_operaciones_productos_pedido_devolver",
               Parametros  : ["IdPedido"],
               // OrdenColumnas: ["Abreviatura", "Cantidad", "CantidadBono", "PrecioUnitario", "Total"],
-              ColumnasOcultas: ["Id", "IdOperacion", "IdProducto", "Producto", "CantidadEntregada", "CantidadEntregadaBono", "Cliente"],
+              ColumnasOcultas: ["Id", "IdOperacion", "IdProducto", "Producto", "CantidadEntregada", "CantidadEntregadaBono", "Cliente", "TotalEntrega"],
               ColumnasEstilos: [
                 ,
                 {Columna: "Cantidad",       Estilo: {"text-align":"center"}},

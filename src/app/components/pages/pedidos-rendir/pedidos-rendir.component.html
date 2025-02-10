@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf ='lstVendedores.length != 0' class="card-container">
   <mat-card-header>
     <mat-card-title>Pedidos Pendientes de Rendir</mat-card-title>
     <mat-card-subtitle>Haga click en el repartidor</mat-card-subtitle>
@@ -29,4 +29,20 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<mat-card *ngIf ='lstVendedores.length == 0'>
+  <mat-card-content>
+    <div class="SinPedidosPendientes">
+      No se tiene pedidos pendientes de rendir
+      <br>
+      <mat-icon>sentiment_very_dissatisfied</mat-icon>
+    </div>
+  
+  </mat-card-content>
+</mat-card>
+
+<div   >
+ 
+</div>
+
 <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>

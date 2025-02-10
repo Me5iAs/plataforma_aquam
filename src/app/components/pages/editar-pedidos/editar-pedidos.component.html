@@ -1,0 +1,9 @@
+<g-Table #gTablePedidosPendientes [Conf]="DataPedidosPendientes">
+</g-Table>
+<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+
+<div *ngIf ='!gTablePedidosPendientes.TieneDatos()' class="SinPedidosPendientes" >
+  No se tiene pedidos pendientes de enviar
+  <br>
+  <mat-icon>sentiment_very_dissatisfied</mat-icon>
+</div>
