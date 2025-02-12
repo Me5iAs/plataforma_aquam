@@ -5,6 +5,7 @@ import { AppDateAdapter, APP_DATE_FORMATS } from "../../format-datepicker";
 import { gTableComponent } from '../../shared/g-table/g-table.component';
 import { gQueryService } from 'src/app/services/g-query.service';
 import { gInputDialogComponent } from '../../shared/g-inputDialog/g-input-dialog.component';
+import { gMapaComponent } from '../../shared/g-mapa/g-mapa.component';
 
 @Component({
   selector: 'app-seguimiento-pedidos',
@@ -18,12 +19,14 @@ import { gInputDialogComponent } from '../../shared/g-inputDialog/g-input-dialog
 export class SeguimientoPedidosComponent implements OnInit {
     @ViewChild('gTableSeguimiento') gTableSeguimiento: gTableComponent;
     @ViewChild('gInputs') gInputs: gInputDialogComponent
+    @ViewChild('gMapaHistorial') gMapaHistorial: gMapaComponent;
     DataSeguimiento: any;
 
   FiltroForm = new FormGroup({ 
     Desde: new FormControl(new Date(), Validators.required),  
     Hasta: new FormControl(new Date(), Validators.required),
     Pendientes: new FormControl(true, Validators.required),
+    Eliminados: new FormControl(true, Validators.required),
   });
 
 
@@ -37,7 +40,7 @@ export class SeguimientoPedidosComponent implements OnInit {
       Titulo  : "Productos",
       Datos: {
         Store: "sp_operaciones_seguimiento",
-        Parametros: pDesde + "|" + pHasta + "|1" ,
+        Parametros: pDesde + "|" + pHasta + "|1|1" ,
         OrdenColumnas   : [
           "Cliente",
           "EstadoPedido",
@@ -66,10 +69,11 @@ export class SeguimientoPedidosComponent implements OnInit {
                         {Valor: "Enviado",                Etiqueta: "Enviado",                  Icono: "local_shipping",        Estilo: {color:"#ed7c31", cursor:"help"}},
                         {Valor: "Entregado",              Etiqueta: "Entregado",                Icono: "volunteer_activism",    Estilo: {color:"#0084b5", cursor:"help"}},
                         {Valor: "Reprogramado sin rendir",Etiqueta: "Reprogramado sin rendir",  Icono: "update",                Estilo: {color:"#FF2377", cursor:"help"}},
-                        {Valor: "Rechazado sin rendir",   Etiqueta: "Rechazado sin rendir",     Icono: "report_problem",                 Estilo: {color:"#ff2c16", cursor:"help"}},
-                        {Valor: "Rendido",                Etiqueta: "Rendido",                  Icono: "assignment_turned_in",  Estilo: {color:"#28A745", cursor:"help"}},
-                        {Valor: "Reprogramado rendido",   Etiqueta: "Reprogramado rendido",     Icono: "event_available",       Estilo: {color:"#FF2377", cursor:"help"}},
-                        {Valor: "Rechazado rendido",      Etiqueta: "Rechazado rendido",        Icono: "dangerous",        Estilo: {color:"#ff2c16", cursor:"help"}},
+                        {Valor: "Rechazado sin rendir",   Etiqueta: "Rechazado sin rendir",     Icono: "dangerous",             Estilo: {color:"#ff2c16", cursor:"help"}},
+                        {Valor: "Rendido",                Etiqueta: "Rendido",                  Icono: "check_circle",          Estilo: {color:"#28A745", borderRadius:"50%", boxShadow:"0px 0px 3px 4px #28A745", cursor:"help"}},
+                        {Valor: "Reprogramado rendido",   Etiqueta: "Reprogramado rendido",     Icono: "update",                Estilo: {color:"#FFFFFF", background:"#FF2377", borderRadius:"50%", boxShadow:"0px 0px 4px 2px #FF2377", cursor:"help"}},
+                        {Valor: "Rechazado rendido",      Etiqueta: "Rechazado rendido",        Icono: "dangerous",             Estilo: {color:"#ff2c16", borderRadius:"50%", boxShadow:"0px 0px 3px 4px #ff2c16", cursor:"help"}},
+                        {Valor: "Eliminado",              Etiqueta: "Eliminado",                Icono: "highlight_off",         Estilo: {color:"#a02200", background:"black", "border-radius":"50%", "box-shadow":"0px 0px 4px 2px black", cursor:"help"}},
                       ], },
         ],
         ColumnasFusionadas: [
@@ -125,32 +129,69 @@ export class SeguimientoPedidosComponent implements OnInit {
                   },
                   
                 ],
+                // ColumnasClick     : [
+                //   {Columna: "GPS", Accion: (result)=>{
+                //     console.log(result);
+                    
+                //   }}
+                // ],
                 ColumnasIcono     : [
                   { Columna : "Estado",
                     Icono   : [ 
-                                {Valor: "Pendiente",              Etiqueta: "Pendiente",                Icono: "access_time_filled",    Estilo: {color:"#FFC107", cursor:"help" }},
+                                {Valor: "Pendiente",              Etiqueta: "Pendiente",                Icono: "access_time_filled",    Estilo: {color:"#FFC107", cursor:"help"}},
                                 {Valor: "Enviado",                Etiqueta: "Enviado",                  Icono: "local_shipping",        Estilo: {color:"#ed7c31", cursor:"help"}},
                                 {Valor: "Entregado",              Etiqueta: "Entregado",                Icono: "volunteer_activism",    Estilo: {color:"#0084b5", cursor:"help"}},
                                 {Valor: "Reprogramado sin rendir",Etiqueta: "Reprogramado sin rendir",  Icono: "update",                Estilo: {color:"#FF2377", cursor:"help"}},
-                                {Valor: "Rechazado sin rendir",   Etiqueta: "Rechazado sin rendir",     Icono: "report_problem",                 Estilo: {color:"#ff2c16", cursor:"help"}},
-                                {Valor: "Rendido",                Etiqueta: "Rendido",                  Icono: "assignment_turned_in",  Estilo: {color:"#28A745", cursor:"help"}},
-                                {Valor: "Reprogramado rendido",   Etiqueta: "Reprogramado rendido",     Icono: "event_available",       Estilo: {color:"#FF2377", cursor:"help"}},
-                                {Valor: "Rechazado rendido",      Etiqueta: "Rechazado rendido",        Icono: "dangerous",        Estilo: {color:"#ff2c16", cursor:"help"}},
-                              ], },
-                ],
-                // ColumnasEtiquetas:[
-                //   { Columna: "Abreviatura", Etiqueta:"Prod"},
-                //   { Columna: "Cantidad", Etiqueta:"Pedido"},
-                //   { Columna: "PrecioUnitario", Etiqueta:"S/"},
-                //   // { Columna: "Total", Etiqueta:"Total"},
-                //   { Columna: "CantidadEntregada", Etiqueta:"Entregado"},
-                //   // { Columna: "TotalEntrega", Etiqueta:"T. Entrega"},
+                                {Valor: "Rechazado sin rendir",   Etiqueta: "Rechazado sin rendir",     Icono: "dangerous",             Estilo: {color:"#ff2c16", cursor:"help"}},
+                                
+                                {Valor: "Rendido",                Etiqueta: "Rendido",                  Icono: "check_circle",          Estilo: {color:"#28A745", borderRadius:"50%", boxShadow:"0px 0px 3px 4px #28A745", cursor:"help"}},
+                                {Valor: "Reprogramado rendido",   Etiqueta: "Reprogramado rendido",     Icono: "update",                Estilo: {color:"#FFFFFF", background:"#FF2377", borderRadius:"50%", boxShadow:"0px 0px 4px 2px #FF2377", cursor:"help"}},
+                                {Valor: "Rechazado rendido",      Etiqueta: "Rechazado rendido",        Icono: "dangerous",             Estilo: {color:"#ff2c16", borderRadius:"50%", boxShadow:"0px 0px 3px 4px #ff2c16", cursor:"help"}},
+                                {Valor: "Eliminado",              Etiqueta: "Eliminado",                Icono: "highlight_off",         Estilo: {color:"#a02200", background:"black", "border-radius":"50%", "box-shadow":"0px 0px 4px 2px black", cursor:"help"}},
 
-                // ],
+                             ], },
+                ],
                 ColumnasEstilos  : [
                   {Columna: "Usuario",       Estilo: {"text-align": "center"} },
                   {Columna: "Estado",       Estilo: {"text-align": "center"} }
                 ],
+                Acciones: [
+                  { Nombre  : 'mapa',
+                    // Color   : "#0084b5",
+                    Estilo:(accion)=> {
+                      // console.log(accion);
+                      
+                      if(accion.GPS ==""){
+                        return {color: "#c3c3c3", cursor:"not-allowed"};
+                      }else{
+                        return {color: "#0084b5", cursor:"pointer"};
+                      }
+                    },
+                    Tooltip : "Mapa",
+                    Icono   : "map",
+                    Tipo    : 'Accion',
+                    Funcion : (accion) => {
+                      if(accion.GPS != ""){
+                        const [latitud, longitud] = accion.GPS.split(",");
+                        this.gMapaHistorial.dataMap = {
+                          Tipo          : "Icono",
+                          AgregarPlanta : true,
+                          MostrarDetalles: true,
+                          Rutas         : false,
+                          Icono         : {Icono: "map", Estilo: {color:"#a02200"}},
+                          Marcadores: [{
+                            Latitud : latitud,
+                            Longitud: longitud
+                           }]
+                        }
+                        this.gMapaHistorial.VerMapaModal()
+                      }
+                      // console.log(accion);
+                      
+                    }
+                  }
+                ]
+                
               },
             );
 
@@ -166,7 +207,7 @@ export class SeguimientoPedidosComponent implements OnInit {
               titulo: "Historial del Pedido",
               tipo: 'icono',
               BtnAceptar: "Aprobar",
-              ancho: '500px',
+              ancho: '600px',
               icono: 'edit',
               formulario: campos,
               FnValidacion: (result) => { return true },
@@ -178,6 +219,7 @@ export class SeguimientoPedidosComponent implements OnInit {
       
           },
         },
+        
           
       ]
 
@@ -185,8 +227,9 @@ export class SeguimientoPedidosComponent implements OnInit {
       }
     }
   }
+
   ngAfterViewInit(): void {
-    this.gTableSeguimiento.cargarData();
+    this.CargarSeguimiento();
 
   }
 
@@ -202,11 +245,18 @@ export class SeguimientoPedidosComponent implements OnInit {
       pPend = "0";
     }
 
+    let pDel = "";
+    if(this.FiltroForm.value.Eliminados == true){
+      pDel = "1";
+    }else{
+      pDel = "0";
+    }
+
     
     let pDesde = this.formatDate(this.FiltroForm.value.Desde);
     let pHasta = this.formatDate(this.FiltroForm.value.Hasta);
 
-    this.DataSeguimiento.Datos.Parametros = pDesde + "|" + pHasta + "|" + pPend;
+    this.DataSeguimiento.Datos.Parametros = pDesde + "|" + pHasta + "|" + pPend + "|" + pDel;
     this.gTableSeguimiento.cargarData()
   }
 

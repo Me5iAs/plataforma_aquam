@@ -74,7 +74,7 @@ export class NuevoPedidoComponent implements OnInit {
       Titulo: "Nuevo Pedido", //titulo del formulario
       FnLimpiar: () => { this.limpiarFormulario(); },
       FnValidacion: (result: any) => { 
-        console.log(result);
+
         
         if(result?.Idcliente?.Id ==null || result?.IdCliente?.Id == "0" ){
           if(result.Glosa ==""){

@@ -75,6 +75,29 @@ export class gAuxService {
     return (decimal || "00").padEnd(2, "0");
   }
   
- 
-
+  // el uso de la funcion GPS es:
+  // async function obtenerPosicion() {
+  //   const posicion = await this.gAuxService.getGPSPosition();
+  //   console.log(posicion);
+  // }
+  getGPS(): Promise<string> {
+    return new Promise<string>((resolve) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            resolve(`${lat},${lng}`);
+          },
+          (error) => {
+            // Si ocurre algún error (por ejemplo, el usuario deniega el acceso), se retorna ""
+            resolve("");
+          }
+        );
+      } else {
+        // Si el navegador no soporta geolocalización
+        resolve("");
+      }
+    });
+  }
 }

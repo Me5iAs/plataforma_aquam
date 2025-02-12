@@ -13,9 +13,14 @@ import { gInputDialogComponent } from '../../shared/g-inputDialog/g-input-dialog
 })
 export class EditarPedidosComponent implements OnInit {
   
-  @ViewChild('gTablePedidosPendientes') gTablePedidosPendientes: gTableComponent;
+  @ViewChild('gTablePedidosPendientes')   gTablePedidosPendientes: gTableComponent;
+  @ViewChild('gTablePedidosEnviados')     gTablePedidosEnviados: gTableComponent;
+  @ViewChild('gTablePedidosReprogramado') gTablePedidosReprogramado: gTableComponent;
+  
   @ViewChild('gInputs') gInputs: gInputDialogComponent
   DataPedidosPendientes: any;
+  DataPedidosEnviados: any;
+  DataPedidosReprogramados:any;
   User:any;
   lstProductos =[];
 
@@ -26,6 +31,7 @@ export class EditarPedidosComponent implements OnInit {
       this.User = data;
     });
 
+    // pendientes
     this.DataPedidosPendientes = {
       Titulo    :   "PedidosPendientes", 
       Datos     : {
@@ -71,7 +77,7 @@ export class EditarPedidosComponent implements OnInit {
       },
 
       Opciones: {
-        Checkbox          : true,
+        Checkbox          : false,
         DeleteSelectCheck : false,
         Filtro            : false,
       },
@@ -79,9 +85,9 @@ export class EditarPedidosComponent implements OnInit {
 
         Otros: [
           { Nombre: 'Editar',
-            Color: "#048979",
-            Tooltip: "Editar",
-            Icono: "app_registration",
+            Color: "#FFC107",
+            Tooltip: "Editar pedido",
+            Icono: "edit_note",
             Tipo: 'Accion',
             Funcion: (row) => {
               this.gInputs.data = {
@@ -97,14 +103,18 @@ export class EditarPedidosComponent implements OnInit {
                   // console.log(result);
                   const productos = JSON.stringify(result);
 
-                  this.gQuery.sql("sp_operaciones_producto_idoperacion_actualizar", row.IdPedido + "|"+ productos + "|" + this.User?.Id).subscribe();
-                  // alert("Aprobación Registrada");
-                  // this.gTablePedidosPendientes.cargarData()
+                  this.gQuery.sql("sp_operaciones_producto_idoperacion_actualizar", row.IdPedido + "|"+ productos + "|" + this.User?.Id).subscribe((data:any)=>{
+                    if(data && data[0].Resultado =='1'){
+                      alert(data[0].Mensaje)
+                      this.gTablePedidosPendientes.cargarData();
+                    }else{
+                      alert(data[0].Mensaje)
+                    }
+
+                  });
                 }
               };
 
-              // console.log(row);
-              
               this.gQuery.sql("sp_operaciones_productos_todo_pedido_devolver", row.IdPedido).subscribe((data: any) => {
       
                 if (data) {
@@ -122,6 +132,190 @@ export class EditarPedidosComponent implements OnInit {
               });
             },
           },
+          { Nombre: 'Eliminar',
+            Color: "#f44336",
+            Tooltip: "Eliminar pedido",
+            Icono: "delete_forever",
+            Tipo: 'Accion',
+            Funcion: (row) => {
+        
+              if(confirm("Advertencia \n\n Esta acción eliminará el pedido, ¿Desea continuar?")){
+
+                this.gAux.getGPS().then(posicion => {
+                  
+                  this.gQuery.sql("sp_operaciones_eliminar", row.IdPedido + "|" + this.User.Id + "|" + posicion).subscribe((data: any) => {
+        
+                    if (data && data[0].Resultado ==1) {
+                      this.gTablePedidosPendientes.cargarData();
+                      alert(data[0].Mensaje)
+                    }else{
+                      alert(data[0].Mensaje)
+                    }
+                  });
+                });
+
+              }
+
+            },
+          },
+        ]
+      }
+    }
+
+    
+
+    // enviados
+    this.DataPedidosEnviados = {
+      Titulo    :   "PedidosPendientes", 
+      Datos     : {
+          Store             : "sp_operaciones_todosenviados_devolver",
+          ColumnasOcultas   : ["Id", "Repartidor", "FechaEnvio", "HoraEnvio", "NombreCliente", "Glosa", "Referencia", "UsuarioRegistro",  "Productos", "IdCliente", "IdPedido", "Direccion", "FechaPideEntregar", "HoraPideEntregar", "PosicionGPS", "IdUsuarioRegistra", "FechaRegistro", "HoraRegistro"],
+          ColumnasEtiquetas : [
+            {Columna : "NombreCliente", Etiqueta: "Cliente"}
+            ],
+
+          ColumnasFusionadas: [
+            { Columna: "Cliente",
+              Titulo: "<span>$NombreCliente</span>",
+              Cuerpo: "$Direccion ($Referencia)",
+              EstiloTitulo: { display:"block", "font-size":"16px", "font-weight":"500" },
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"},
+            },
+            { Columna: "Pedido",
+              Titulo: "<span>$Productos</span>",
+              Cuerpo: "Entrega Pedida: [$FechaPideEntregar] $HoraPideEntregar ",
+              EstiloTitulo: { display:"block", "font-weight":"500" },
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"},
+            },
+            { Columna: "Repartidor", 
+              Titulo: "$Repartidor"
+            },
+            { Columna: "Fecha Envio", 
+              Titulo: "$FechaEnvio", 
+              Cuerpo: "$HoraEnvio",
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"},}
+          ],
+
+          ColumnasEstilos: [
+            {Columna: "Repartidor", Estilo : {"text-align": "center"}},
+            {Columna: "Fecha Envio", Estilo : {"text-align": "center"}
+          }],
+
+          ColumnasOcultarPantallas: [
+            {Columna: "Usuario", Celular: true, Mediano: true, Grande : false, Enorme : false }
+          ]
+
+      },
+
+      Opciones: {
+        Checkbox          : false,
+        DeleteSelectCheck : false,
+        Filtro            : false,
+      },
+      Acciones: {
+
+        Otros: [
+          { Nombre: 'Editar',
+            Color: "#ed7c31",
+            Tooltip: "Revertir",
+            Icono: "restart_alt",
+            Tipo: 'Accion',
+            Funcion: (row) => {
+              if(confirm("¡Alerta! \n\n ¿Confirma que quiere revertir el envío?")){
+                this.gQuery.sql("sp_operaciones_enviar_revertir", row.IdPedido + "|" + this.User.Id).subscribe((data:any)=>{
+                  if(data && data[0].Resultado =='1'){
+                    alert(data[0].Mensaje);
+                    this.gTablePedidosEnviados.cargarData();
+                    this.gTablePedidosPendientes.cargarData();
+
+                  }else{
+                    alert(data[0].Mensaje);
+                  }
+                });
+                
+              }
+            },
+          },
+        ]
+      }
+    }
+
+
+    // Reprogramados
+    this.DataPedidosReprogramados = {
+      Titulo    :   "PedidosPendientes", 
+      Datos     : {
+          Store             : "sp_operaciones_reprogramados_devolver",
+          ColumnasOcultas   : ["Id", "FechaReprogramada", "HoraReprogramada", "FechaEntrega", "HoraEntrega", "Repartidor", "FechaEnvio", "HoraEnvio", "NombreCliente", "Glosa", "Referencia", "UsuarioRegistro",  "Productos", "IdCliente", "IdPedido", "Direccion", "FechaPideEntregar", "HoraPideEntregar", "PosicionGPS", "IdUsuarioRegistra", "FechaRegistro", "HoraRegistro"],
+          
+          ColumnasEtiquetas : [
+            {Columna : "NombreCliente", Etiqueta: "Cliente"}
+          ],
+
+          ColumnasFusionadas: [
+            { Columna: "Cliente",
+              Titulo: "<span>$NombreCliente</span>",
+              Cuerpo: "$Direccion ($Referencia) <br> $Glosa",
+              EstiloTitulo: { display:"block", "font-size":"16px", "font-weight":"500" },
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"},
+            },
+            { Columna: "Pedido",
+              Titulo: "<span>$Productos</span>",
+              Cuerpo: "Entrega Pedida: [$FechaPideEntregar] $HoraPideEntregar ",
+              EstiloTitulo: { display:"block", "font-weight":"500" },
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"},
+            },
+            { Columna: "Repartidor", 
+              Titulo: "$Repartidor"
+            },
+            { Columna: "Fecha Repro", 
+              Titulo: "$FechaReprogramada", 
+              Cuerpo: "$HoraReprogramada",
+              EstiloCuerpo: { display:"block", "font-size":"12px", color: "#212529"}
+            }
+          ],
+
+          ColumnasEstilos: [
+            {Columna: "Repartidor", Estilo : {"text-align": "center"}},
+            {Columna: "Fecha Repro", Estilo : {"text-align": "center"}
+          }],
+
+          ColumnasOcultarPantallas: [
+            {Columna: "Usuario", Celular: true, Mediano: true, Grande : false, Enorme : false }
+          ]
+
+      },
+
+      Opciones: {
+        Checkbox          : false,
+        DeleteSelectCheck : false,
+        Filtro            : false,
+      },
+      Acciones: {
+
+        Otros: [
+          { Nombre: 'RevertirReprogramacion',
+            Color: "#FF2377",
+            Tooltip: "Revertir Reprogramación",
+            Icono: "restart_alt",
+            Tipo: 'Accion',
+            Funcion: (row) => {
+              if(confirm("¡Alerta! \n\n ¿Confirma que quiere revertir la reprogramacion?")){
+                this.gQuery.sql("sp_operaciones_reprogramaciones_revertir", row.IdPedido + "|" + this.User.Id).subscribe((data:any)=>{
+                  if(data && data[0].Resultado =='1'){
+                    alert(data[0].Mensaje);
+                    // this.gTablePedidosEnviados.cargarData();
+                    this.gTablePedidosEnviados.cargarData();
+                    this.gTablePedidosReprogramado.cargarData()
+
+                  }else{
+                    alert(data[0].Mensaje);
+                  }
+                });
+                
+              }
+            },
+          },
         ]
       }
     }
@@ -129,6 +323,8 @@ export class EditarPedidosComponent implements OnInit {
   }
   ngAfterViewInit(): void {
     this.gTablePedidosPendientes.cargarData();
+    this.gTablePedidosEnviados.cargarData();
+    this.gTablePedidosReprogramado.cargarData();
   }
 
   cargarProductos() {

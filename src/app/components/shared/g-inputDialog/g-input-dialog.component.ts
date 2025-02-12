@@ -290,18 +290,26 @@ export class DialogContent {
         param.columnas = [];
       }
   
+   
+      
+      param.columnas = Object.keys(data[0]).filter(column => !param?.ColumnasOcultas?.includes(column));
+      if (param?.ColumnasFusionadas) {
+          param.ColumnasFusionadas.forEach((colFusionada: any) => {
+          param.columnas.push(colFusionada.Columna);
+        });
+      }
+
       if(param.OrdenColumnas){
         param.columnas =  param.OrdenColumnas;
-          
-      }else{
-        param.columnas = Object.keys(data[0]).filter(column => !param?.ColumnasOcultas?.includes(column));
-        if (param?.ColumnasFusionadas) {
-            param.ColumnasFusionadas.forEach((colFusionada: any) => {
-            param.columnas.push(colFusionada.Columna);
-          });
-        }
-      }    
+      }   
+   
+      // console.log("aaa");
+      
+      if (param?.Acciones ) {
+        param.columnas.push('actions');
+      }
     })
+    // console.log("CCC");
     
   }
 
@@ -320,6 +328,17 @@ export class DialogContent {
       return "";
     }
    
+  }
+
+  AnchoAcciones(param){
+    let total;
+    if(param?.Acciones){
+       total = Object.keys(param.Acciones).filter(item=> item != "Agregar" && item !="Otros").length
+      if(param?.Acciones?.Otros){
+        total = total + Object.keys(param.Acciones.Otros).length;
+      }
+    }
+    return total * 40;    
   }
 
   isFusionada(column: string, campo): boolean {
@@ -391,6 +410,16 @@ export class DialogContent {
     
   }
 
+  getColorIconoTablaDinamicaAcciones(accion, element){
+    if(accion?.Estilo){
+      return accion.Estilo(element)
+    }else if(accion?.Color){
+      return {Color: accion.Color}
+    }else{
+      return null
+    }
+  }
+
   getEventoclick(elemento:any, columna:any, control:any){
 
     if(control?.ColumnasClick?.some(item=> item.Columna == columna)){
@@ -401,11 +430,17 @@ export class DialogContent {
   getValorColumnaIcono(elemento, columna, campo:string, param){  
     
     let item:any = param.ColumnasIcono.filter(item => item.Columna == columna)[0];
+ 
     // console.log(item);
-
+    // console.log(elemento);
+    // console.log(columna);
     let Icono = item.Icono.filter(iconos=> iconos.Valor == elemento[columna]);
-    // console.log(Icono[campo]);
     
+ 
+    // if(elemento.Estado == 'Eliminado'){
+    //   console.log("AAAA")
+
+    // }
     
     return Icono[0][campo] || "";
     

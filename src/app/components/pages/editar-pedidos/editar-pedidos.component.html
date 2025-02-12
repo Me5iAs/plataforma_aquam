@@ -1,9 +1,71 @@
-<g-Table #gTablePedidosPendientes [Conf]="DataPedidosPendientes">
-</g-Table>
-<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+<mat-card style="margin:auto; width: 90%; margin-top:20px; margin-bottom: 20px;" >
+  <mat-card-content>
+    
+<mat-tab-group mat-align-tabs="start">
 
-<div *ngIf ='!gTablePedidosPendientes.TieneDatos()' class="SinPedidosPendientes" >
-  No se tiene pedidos pendientes de enviar
-  <br>
-  <mat-icon>sentiment_very_dissatisfied</mat-icon>
-</div>
+  <!-- pendientes -->
+  <mat-tab >
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #FFC107; margin-right: 8px;">access_time_filled</mat-icon>
+      Pendientes
+    </ng-template>
+
+    <g-Table #gTablePedidosPendientes [Conf]="DataPedidosPendientes"></g-Table>
+    <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+    
+    <div *ngIf ='!gTablePedidosPendientes.TieneDatos()' class="SinPedidosPendientes" >
+      No se tiene pedidos pendientes de enviar
+      <br>
+      <mat-icon>sentiment_very_dissatisfied</mat-icon>
+    </div>
+
+  </mat-tab>
+
+  <!-- Enviados -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #ed7c31; margin-right: 8px;">local_shipping</mat-icon>
+      Enviados
+    </ng-template>
+    <g-Table #gTablePedidosEnviados [Conf]="DataPedidosEnviados"></g-Table>
+  </mat-tab>
+
+  <!-- reprogramados -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #FF2377; margin-right: 8px;">update</mat-icon>
+      Reprogramado
+    </ng-template>
+    <g-Table #gTablePedidosReprogramado [Conf]="DataPedidosReprogramados"></g-Table>
+  </mat-tab>
+
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #ff2c16; margin-right: 8px;">report_problem</mat-icon>
+      Rechazado
+    </ng-template>
+    revertir reprogramado
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #0084b5; margin-right: 8px;">volunteer_activism</mat-icon>
+      Entregado
+    </ng-template>
+    revertir entrega
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #28A745; margin-right: 8px;">assignment_turned_in</mat-icon>
+      Rendido
+    </ng-template>
+    revertir rendición
+  </mat-tab>
+
+</mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+

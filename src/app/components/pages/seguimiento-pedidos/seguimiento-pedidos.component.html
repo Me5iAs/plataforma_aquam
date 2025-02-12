@@ -24,7 +24,10 @@
 
 
         <mat-checkbox formControlName="Pendientes" style="margin-right: 10px;">
-          Incluir pendientes
+          Pendientes
+        </mat-checkbox>
+        <mat-checkbox formControlName="Eliminados" style="margin-right: 10px;">
+          Eliminados
         </mat-checkbox>
 
 
@@ -32,6 +35,7 @@
       </form>
       <g-Table #gTableSeguimiento [Conf]="DataSeguimiento" style="width: 100%;"></g-Table>
       <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+      <g-mapa #gMapaHistorial style="display: none;"></g-mapa>
     </div>
 
   </mat-card-content>

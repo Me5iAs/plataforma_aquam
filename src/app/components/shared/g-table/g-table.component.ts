@@ -381,12 +381,19 @@ export class gTableComponent  {
   getValorColumnaIcono(elemento, columna, campo:string){  
     
     let item:any = this.Conf.Datos.ColumnasIcono.filter(item => item.Columna == columna)[0];
+    
     // console.log(item);
-
+    // console.log(elemento);
+    // console.log(columna);
     let Icono = item.Icono.filter(iconos=> iconos.Valor == elemento[columna]);
-    // console.log(Icono[campo]);
     
     
+    // console.log(campo);
+    // if(elemento.EstadoPedido == 'Eliminado'){
+    //   console.log("AAAA")
+
+    // }
+  
     return Icono[0][campo] || "";
     
   }
@@ -1162,6 +1169,13 @@ export class gTableDialog implements OnInit {
     
   }
 
+  getEventoclick(elemento:any, columna:any, control:any){
+
+    if(control?.ColumnasClick?.some(item=> item.Columna == columna)){
+      control?.ColumnasClick?.find(item=> item.Columna == columna).Accion(elemento);
+    }
+  }
+
   getEtiquetaColumna(campo, columna){
     let item:any = campo?.ColumnasEtiquetas?.find(item => item.Columna == columna)?.Etiqueta || columna;
     return item;
@@ -1206,17 +1220,41 @@ loadDynamicTable(param){
 
     if(param.OrdenColumnas){
       param.columnas =  param.OrdenColumnas;
-        
-    }else{
-      param.columnas = Object.keys(data[0]).filter(column => !param.ColumnasOcultas.includes(column));
-      if (param.ColumnasFusionadas) {
-        param.ColumnasFusionadas.forEach((colFusionada: any) => {
-          param.columnas.push(colFusionada.Columna);
-        });
-      }
-    }    
+    }
+
+    
+    param.columnas = Object.keys(data[0]).filter(column => !param.ColumnasOcultas.includes(column));
+    if (param.ColumnasFusionadas) {
+      param.ColumnasFusionadas.forEach((colFusionada: any) => {
+        param.columnas.push(colFusionada.Columna);
+      });
+    }
+    
+
+  
+    if (
+      param?.Acciones && (param.Acciones.Editar ||
+                              param.Acciones.Eliminar  ||
+                              param.Acciones.Info  ||
+                                (param.Acciones.Otros?.length > 0)
+                            )
+    ) {
+      param.columnas.push('actions');
+    }
+
+    
   })
   
+}
+AnchoAcciones(param){
+  let total;
+  if(param?.Acciones){
+     total = Object.keys(param.Acciones).filter(item=> item != "Agregar" && item !="Otros").length
+    if(param?.Acciones?.Otros){
+      total = total + Object.keys(param.Acciones.Otros).length;
+    }
+  }
+  return total * 40;    
 }
 // CARGAR LISTA DINÁMICA (carga la lista en un array con el nombre del campo)
 loadDynamicList(param: any): void {
