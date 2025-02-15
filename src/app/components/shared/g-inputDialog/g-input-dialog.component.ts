@@ -136,6 +136,7 @@ export class DialogContent {
   public FileData;
   public File: { [key: string]: File } = {};
   public imageUrl: { [key: string]: any } = {};
+  BtnCancelar:boolean = true
 
   constructor(
     private gQuery:gQueryService,
@@ -148,6 +149,14 @@ export class DialogContent {
       
     this.form = this.fb.group({});
     this.createForm();
+  }
+
+  ngOnInit(): void {
+    
+    if('BtnCancelar' in this.data){
+      this.BtnCancelar = this.data.BtnCancelar
+    }
+
   }
 
   createForm() {
@@ -368,6 +377,7 @@ export class DialogContent {
 
   getFusionadaStyle(campo, columna: string, tipo: 'EstiloTitulo' | 'EstiloCuerpo'): any {
     const columnaFusionada = campo?.ColumnasFusionadas?.find(item => item.Columna==columna );
+    
     // const columnaFusionada = this.Conf?.Datos?.ColumnasFusionadas?.find(fusionada => fusionada.Columna === column);
     return columnaFusionada?.[tipo] || {}; // Devolver el estilo o un objeto vacío si no existe
   } 

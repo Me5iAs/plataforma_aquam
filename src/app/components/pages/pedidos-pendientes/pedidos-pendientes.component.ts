@@ -192,20 +192,24 @@ export class PedidosPendientesComponent implements OnInit {
       this.enviarForm.value.IdVehiculo + "|" + 
       JSON.stringify(IdsJSON)
 
-    this.gQuery.sql("sp_operaciones_enviar_registrar", parametros).subscribe((data)=> {
-      if(data && data[0].Resultado =="1"){
-        alert("Pedidos enviados");
-        this.PedidosSel = [];
-        this.gTablePedidosPendientes.cargarData();
-        this.CargarProductosPendientes();
-      }else{
-        alert("Error \n\n No se ha podido registrar el pedido");
-      }
+      this.gAux.getGPS().then(posicion => {
+        this.gQuery.sql("sp_operaciones_enviar_registrar", parametros + "|" + posicion).subscribe((data)=> {
+          if(data && data[0].Resultado =="1"){
+            alert("Pedidos enviados");
+            this.PedidosSel = [];
+            this.gTablePedidosPendientes.cargarData();
+            this.CargarProductosPendientes();
+          }else{
+            alert("Error \n\n No se ha podido registrar el pedido");
+          }
+    
+        }, 
+        error =>{
+          alert("error al registrar el envio")
+        });
+      })
 
-    }, 
-    error =>{
-      alert("error al registrar el envio")
-    });
+
   }
 
   TotalProducto(Id){

@@ -341,7 +341,6 @@ export class gTableComponent  {
     }
     
   }
-
   
   getEstiloColumna(columna){
     // console.log(columna)
@@ -369,7 +368,6 @@ export class gTableComponent  {
     
     return classes;
   }
-
 
   getEventoclick(elemento:any, columna:any){
 
@@ -410,6 +408,17 @@ export class gTableComponent  {
     // console.log(item)
     return item;
     
+  }
+
+  getEstiloIconoColAccion(accion, element){
+     if(accion?.Color){
+      return {color:accion.Color}      
+    }else if(accion?.Estilo){
+      return accion.Estilo(element)
+    }else{
+      null
+    }
+    // [style.color]="accion.Color ? accion.Color : null" 
   }
 
   aplicarFiltro(event: Event | null = null) {

@@ -537,6 +537,7 @@ export class EntregarComponent implements OnInit {
   }
 
   async RegistrarVenta(store:any, parametros:any, ImgApp:any){
+    
     const coordenadas = await this.actualizarGPS(); 
     this.gQuery.sql(store, parametros + "|" + coordenadas.lat + "|" + coordenadas.lng).subscribe((data:any) => {
       if(data && data[0].Resultado == "1"){

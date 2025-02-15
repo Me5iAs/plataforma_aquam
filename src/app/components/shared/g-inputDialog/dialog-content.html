@@ -111,7 +111,7 @@
 
                 <td mat-cell *matCellDef="let row" [style]="getEstiloColumna( control, column)">
                   <!-- Titulo con estilos dinámicos -->
-                  <div [ngStyle]="getFusionadaStyle(column, 'EstiloTitulo', control)" 
+                  <div [ngStyle]="getFusionadaStyle(control, column, 'EstiloTitulo')" 
                   [innerHTML]="getFusionadaValue(row, column, 'Titulo', control)">
                 </div>
                   
@@ -289,5 +289,5 @@
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button color="primary" [disabled]="!form.valid" (click)="onSubmit()"> {{data.BtnAceptar || "Aceptar" }} </button>
-  <button mat-raised-button color="warn" (click)="onCancel()">Cancelar</button>
+  <button *ngIf="BtnCancelar" mat-raised-button color="warn" (click)="onCancel()">Cancelar</button>
 </div>

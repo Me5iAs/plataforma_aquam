@@ -1,0 +1,34 @@
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  /* Espacio entre los controles */
+}
+
+.form-item {
+  flex: 1 1;
+  margin-right: 10px;
+  /* Se ajusta automáticamente, pero con un ancho mínimo */
+  /* width: calc(100% - 10px);  */
+  width: 140px;
+}
+
+form {
+  margin: auto;
+  margin-top: 10px;
+  width: 95%;
+}
+
+@media (max-width: 430px) {
+  
+  form {
+    margin: auto;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-item {
+    width: 130px;
+  }
+}

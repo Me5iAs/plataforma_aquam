@@ -1,5 +1,40 @@
 
-<g-Table #gTableEntregas [Conf]="DataEntregas">
-</g-Table>
-<app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
-<g-mapa #gMapaClientes style="display: none;"></g-mapa>
+<mat-tab-group mat-align-tabs="start">
+
+  <!-- pendientes -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: #048979; margin-right: 8px;">new_releases</mat-icon>
+      Pendientes
+    </ng-template>
+    <g-Table #gTableEntregas [Conf]="DataEntregas">
+    </g-Table>
+    <app-gInputDialog #gInputs style="display: none;"></app-gInputDialog>
+    <g-mapa #gMapaClientes style="display: none;"></g-mapa>
+  </mat-tab>
+
+  <!-- emitidas -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon  style="color: rgb(40, 167, 69); margin-right: 8px;">recommend</mat-icon>
+      Aprobaciones
+    </ng-template>
+    <form [formGroup]="emitidosForm">
+      <!-- Campo de tipo Fecha -->
+      <mat-form-field class="form-item" appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="desde" formControlName="pDesde">
+        <mat-datepicker-toggle matSuffix [for]="desde"></mat-datepicker-toggle>
+        <mat-datepicker #desde></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="form-item" appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="hasta" formControlName="pHasta">
+        <mat-datepicker-toggle matSuffix [for]="hasta"></mat-datepicker-toggle>
+        <mat-datepicker #hasta></mat-datepicker>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="cargarEmitidos()">Mostrar</button>
+    </form>
+    <g-Table #gTableAprobacionesEmitidas [Conf]="DataAprobacionesEmitidas"></g-Table>
+  </mat-tab>

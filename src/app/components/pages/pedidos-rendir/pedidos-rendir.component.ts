@@ -9,6 +9,7 @@ import { APP_DATE_FORMATS, AppDateAdapter } from '../../format-datepicker';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 const url_api = gConstantesService.gImageneUsuarios;
 import { Router } from '@angular/router';
+import { gAuxService } from 'src/app/services/g-aux.services';
 
 @Component({
   selector: 'app-pedidos-rendir',
@@ -25,6 +26,7 @@ export class PedidosRendirComponent implements OnInit {
   constructor(
     private gQuery:gQueryService, 
     private gAuth:gAuthService, 
+    private gAux:gAuxService,
     private dialog: MatDialog,
     private router: Router ) { }
 
@@ -192,8 +194,8 @@ export class PedidosRendirComponent implements OnInit {
         ok: (result) => {
           
           console.log(result);
-         
-          this.gQuery.sql("sp_operaciones_venta_cliente_registrar", rep.Id + "|" + this?.User?.Id).subscribe((data:any)=> {
+         this.gAux.getGPS().then(posicion => {
+          this.gQuery.sql("sp_operaciones_venta_cliente_registrar", rep.Id + "|" + this?.User?.Id + "|" + posicion).subscribe((data:any)=> {
             if(data && data[0].Resultado =="1"){
               this.cargarListaRepartidores();
               // this.lstVendedores = this.lstVendedores.filter(vendedor => vendedor.Id !== rep.Id);
@@ -207,6 +209,8 @@ export class PedidosRendirComponent implements OnInit {
             }
         
           });
+         })
+       
           
 
         }

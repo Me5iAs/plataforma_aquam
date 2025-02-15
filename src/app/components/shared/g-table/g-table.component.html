@@ -105,10 +105,11 @@
           <!-- otras acciones -->
           <ng-container *ngFor="let accion of Conf.Acciones.Otros">
             <button
-            [style.color]="accion.Color ? accion.Color : null" 
-            mat-icon-button 
-            (click)="ejecutarAccion(accion, element)"
-            [matTooltip]="accion?.Tooltip">
+              mat-icon-button 
+              [style] = "getEstiloIconoColAccion(accion, element)" 
+              [matTooltip]="accion?.Tooltip"
+              (click)="ejecutarAccion(accion, element)"
+            >
               <mat-icon>{{ accion.Icono }}</mat-icon>
             </button>
           </ng-container>

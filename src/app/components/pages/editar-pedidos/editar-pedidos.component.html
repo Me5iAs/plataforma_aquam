@@ -34,34 +34,53 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon  style="color: #FF2377; margin-right: 8px;">update</mat-icon>
-      Reprogramado
+      Reprogramados
     </ng-template>
     <g-Table #gTablePedidosReprogramado [Conf]="DataPedidosReprogramados"></g-Table>
   </mat-tab>
 
-
+<!-- rechazado -->
   <mat-tab>
     <ng-template mat-tab-label>
-      <mat-icon  style="color: #ff2c16; margin-right: 8px;">report_problem</mat-icon>
-      Rechazado
+      <mat-icon  style="color: #ff2c16; margin-right: 8px;"> dangerous </mat-icon>
+      Rechazados
     </ng-template>
-    revertir reprogramado
+    <g-Table #gTablePedidosRechazado [Conf]="DataPedidosRechazado"></g-Table>
   </mat-tab>
 
+  <!-- entregado -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon  style="color: #0084b5; margin-right: 8px;">volunteer_activism</mat-icon>
       Entregado
     </ng-template>
-    revertir entrega
+    <g-Table #gTablePedidosEntregado [Conf]="DataPedidosEntregado"></g-Table>
   </mat-tab>
-
+    
+  <!-- Rendido -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon  style="color: #28A745; margin-right: 8px;">assignment_turned_in</mat-icon>
       Rendido
     </ng-template>
-    revertir rendición
+    <form [formGroup]="rendidosForm" style="margin-top:10px">
+      <!-- Campo de tipo Fecha -->
+      <mat-form-field class="form-item" appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput [matDatepicker]="desde" formControlName="pDesde">
+        <mat-datepicker-toggle matSuffix [for]="desde"></mat-datepicker-toggle>
+        <mat-datepicker #desde></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="form-item" appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput [matDatepicker]="hasta" formControlName="pHasta">
+        <mat-datepicker-toggle matSuffix [for]="hasta"></mat-datepicker-toggle>
+        <mat-datepicker #hasta></mat-datepicker>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="cargarRendidos()">Mostrar</button>
+    </form>
+    <g-Table #gTablePedidosRendidos [Conf]="DataPedidosRendidos"></g-Table>
   </mat-tab>
 
 </mat-tab-group>

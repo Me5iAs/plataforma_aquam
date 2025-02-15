@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -8,7 +7,50 @@ export class gAuxService {
 
   constructor() { }
 
+  public getAhora(
+    formatType:
+      | "fecha_base"
+      | "fecha_corta"
+      | "fecha_larga"
+      | "hora_base"
+      | "hora_corta"
+      | "hora_larga"
+  ): string {
+    const now = new Date();
+    // Convertir a UTC y ajustar a GMT-5 (restando 5 horas en milisegundos)
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const gmtMinus5 = new Date(utc - 5 * 60 * 60000);
 
+    // Componentes de la fecha
+    const day = String(gmtMinus5.getDate()).padStart(2, "0");
+    const month = String(gmtMinus5.getMonth() + 1).padStart(2, "0");
+    const year = String(gmtMinus5.getFullYear());
+    const shortYear = year.slice(-2);
+
+    // Componentes de la hora
+    const hours24 = String(gmtMinus5.getHours()).padStart(2, "0");
+    const hours12 = String(gmtMinus5.getHours() % 12 || 12).padStart(2, "0");
+    const minutes = String(gmtMinus5.getMinutes()).padStart(2, "0");
+    const seconds = String(gmtMinus5.getSeconds()).padStart(2, "0");
+    const meridiem = gmtMinus5.getHours() >= 12 ? "pm" : "am";
+
+    switch (formatType) {
+      case "fecha_base":
+        return `${year}-${month}-${day}`;
+      case "fecha_corta":
+        return `${day}/${month}/${shortYear}`;
+      case "fecha_larga":
+        return `${day}/${month}/${year}`;
+      case "hora_base":
+        return `${hours24}:${minutes}:${seconds}`;
+      case "hora_corta":
+        return `${hours12}:${minutes} ${meridiem}`;
+      case "hora_larga":
+        return `${hours12}:${minutes}:${seconds} ${meridiem}`;
+      default:
+        throw new Error("Formato no reconocido");
+    }
+  }
   Hora_2b(time: string): string {
   const parts = time.split(':');
   return `${parts[0]}:${parts[1]}:00`; 

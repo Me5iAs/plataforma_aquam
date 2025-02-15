@@ -146,7 +146,7 @@ export class VentaPlantaComponent implements OnInit {
         
         // console.log(result);
         let IdCliente =0;
-        if(result.Idcliente.Id ==null){
+        if(result?.Idcliente?.Id ==null){
           IdCliente = 0;
         }else{
           IdCliente = result.Idcliente.Id;
